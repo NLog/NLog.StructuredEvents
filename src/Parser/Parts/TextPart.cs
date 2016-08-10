@@ -5,6 +5,7 @@ namespace Parser
     [DebuggerDisplay("{Describe}")]
     public class TextPart : IPart
     {
+        private readonly char? _escapeChar;
         readonly string _text;
 
         /// <summary>
@@ -13,17 +14,16 @@ namespace Parser
         private bool _escaped;
 
         /// <summary>Initializes a new instance of the <see cref="T:System.Object" /> class.</summary>
-        public TextPart(char c, bool escaped)
+        public TextPart(char c, char escapeChar)
         {
-            _escaped = escaped;
+            _escapeChar = escapeChar;
             _text = c.ToString();
         }
 
         /// <summary>Initializes a new instance of the <see cref="T:System.Object" /> class.</summary>
-        public TextPart(string text, bool escaped)
+        public TextPart(string text)
         {
             this._text = text;
-            _escaped = escaped;
         }
 
         /// <summary>Returns a string that represents the current object.</summary>
@@ -34,12 +34,7 @@ namespace Parser
 
         public string Print()
         {
-            if (_escaped)
-            {
-                return "{" + _text + "}";
-            }
-
-            return _text;
+            return _escapeChar + _text;
         }
 
         #endregion

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace Parser
@@ -23,20 +24,23 @@ namespace Parser
 
             foreach (var c in context.GetNext())
             {
-                switch (c)
+
+                if (c == '{')
                 {
-                    case '{':
-                        {
-                            context.CharIndex++;
-                            yield return ParseBracketPart(context);
-                            break;
-                        }
-                    default:
-                        {
-                            yield return ParseTextPart(context, false);
-                            break;
-                        }
+                    context.CharIndex++;
+                    yield return ParseOpenBracketPart(context);
                 }
+                else if (c == '}')
+                {
+                    context.CharIndex++;
+                    yield return ParseCloseBracketPart(context);
+                }
+                else
+                {
+                    yield return ParseTextPart(context);
+                }
+
+
             }
         }
 
@@ -44,22 +48,20 @@ namespace Parser
         /// Parse normal text
         /// </summary>
         /// <param name="context"></param>
-        /// <param name="escapedPart"></param>
         /// <returns></returns>
-        private TextPart ParseTextPart(ParserContext context, bool escapedPart)
+        private TextPart ParseTextPart(ParserContext context)
         {
             var sb = new StringBuilder();
 
-            char stopChar = escapedPart ? '}' : '{';
 
             foreach (var c in context.GetNext())
             {
-                if (c == stopChar)
+                if (c == '{' || c == '}')
                 {
                     //done
-                    
+
                     context.CharIndex--; //re-read { (todo fix)
-                    return new TextPart(sb.ToString(), escapedPart);
+                    return new TextPart(sb.ToString());
                 }
                 else
                 {
@@ -67,7 +69,18 @@ namespace Parser
                 }
 
             }
-            return new TextPart(sb.ToString(), escapedPart);
+            return new TextPart(sb.ToString());
+        }
+
+        private IPart ParseCloseBracketPart(ParserContext context)
+        {
+            var nextChar = context.GetNext().FirstOrDefault();
+            if (nextChar == '}')
+            {
+                return new TextPart('}', '}');
+            }
+            throw new Exception("invalid close } on index " + context.CharIndex);
+
         }
 
         /// <summary>
@@ -75,7 +88,7 @@ namespace Parser
         /// </summary>
         /// <param name="context"></param>
         /// <returns></returns>
-        private IPart ParseBracketPart(ParserContext context)
+        private IPart ParseOpenBracketPart(ParserContext context)
         {
             foreach (var c in context.GetNext())
             {
@@ -83,10 +96,7 @@ namespace Parser
                 {
                     case '{':
                         {
-                            //escacped bracket
-                            var part = ParseTextPart(context, true);
-                            context.CharIndex++;
-                            return part;
+                            return new TextPart('{', '{');
                         }
                     case '@':
                         {
@@ -114,7 +124,7 @@ namespace Parser
                         return ParseHole(context, HoleType.Text);
                 }
             }
-            return new TextPart(context.CurrentChar, false);
+            return new TextPart(context.CurrentChar.ToString());
 
         }
 
