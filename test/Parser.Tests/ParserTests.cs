@@ -37,7 +37,7 @@ namespace Parser.Tests
         [InlineData("{0:000}")] 
         [InlineData("{aaa:000}")] 
         [InlineData(" {@destructre} ")] 
-        [InlineData(" {@stringify} ")] 
+        [InlineData(" {$stringify} ")] 
         public void ParseAndPrint(string input)
         {
             var parser = new TemplateParser();
