@@ -148,6 +148,7 @@ namespace Parser
                 {
                     case ':':
                         {
+                            context.CharIndex++;
                             var format = ParseFormat(context);
                             //done
                             return new HolePart(nameSb.ToString(), type, context.PartIndex++, format);
@@ -170,7 +171,6 @@ namespace Parser
         private string ParseFormat(ParserContext context)
         {
             var formatSb = new StringBuilder();
-            formatSb.Append(context.CurrentChar);
             foreach (var c in context.GetNext())
             {
                 //done on }

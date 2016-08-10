@@ -34,6 +34,8 @@ namespace Parser.Tests
         [InlineData(" }} ")] 
         [InlineData("}} ")] 
         [InlineData(" }}")] 
+        [InlineData("{0:000}")] 
+        [InlineData("{aaa:000}")] 
         [InlineData(" {@destructre} ")] 
         [InlineData(" {@stringify} ")] 
         public void ParseAndPrint(string input)
