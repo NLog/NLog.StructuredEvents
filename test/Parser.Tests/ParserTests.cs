@@ -9,6 +9,7 @@ namespace Parser.Tests
     public class ParserTests
     {
         [Theory]
+        [InlineData("")]
         [InlineData("Hello {0}")]
         [InlineData("I like my {car}")]
         [InlineData("But when Im drunk I need a {cool} bike")]
@@ -33,7 +34,9 @@ namespace Parser.Tests
         [InlineData(" }} ")] 
         [InlineData("}} ")] 
         [InlineData(" }}")] 
-        public void TestSimple(string input)
+        [InlineData(" {@destructre} ")] 
+        [InlineData(" {@stringify} ")] 
+        public void ParseAndPrint(string input)
         {
             var parser = new TemplateParser();
             var parts = parser.Parse(input);
@@ -42,6 +45,20 @@ namespace Parser.Tests
             var printed = parts.Print();
             Assert.Equal(input, printed);
 
+        }
+
+        [Theory]
+        [InlineData("Hello {0")]
+        [InlineData("Hello 0}")]
+        [InlineData("{")]
+        [InlineData("}")]
+        [InlineData("}}}")]
+        [InlineData("}}}{")]
+        [InlineData("{}}{")]
+        public void ThrowException(string input)
+        {
+            var parser = new TemplateParser();
+            Assert.Throws<Exception>(() => parser.Parse(input));
         }
 
     }

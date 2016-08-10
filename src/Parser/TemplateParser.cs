@@ -100,10 +100,14 @@ namespace Parser
                         }
                     case '@':
                         {
+                            //skip @
+                            context.CharIndex++;
                             return ParseHole(context, HoleType.Destructuring);
                         }
                     case '$':
                         {
+                            //skip $
+                            context.CharIndex++;
                             return ParseHole(context, HoleType.Stringification);
                         }
                     case '0':
@@ -124,7 +128,7 @@ namespace Parser
                         return ParseHole(context, HoleType.Text);
                 }
             }
-            return new TextPart(context.CurrentChar.ToString());
+            throw new Exception("invalid close { on index " + context.CharIndex);
 
         }
 
@@ -160,7 +164,7 @@ namespace Parser
                 }
             }
             //todo
-            throw new Exception("parse failed");
+            throw new Exception("Hole not correct on index "+  context.CharIndex);
         }
 
         private string ParseFormat(ParserContext context)
@@ -169,21 +173,11 @@ namespace Parser
             formatSb.Append(context.CurrentChar);
             foreach (var c in context.GetNext())
             {
-
-                if (c == '}')
-                {
-                    break;
-                }
-                else
-                {
+                //done on }
+                if (c != '}')
                     formatSb.Append(c);
-                }
-
             }
             return formatSb.ToString();
         }
     }
-
-    //{0}asd
-    //asd{0}
 }
