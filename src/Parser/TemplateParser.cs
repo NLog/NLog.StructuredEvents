@@ -40,6 +40,12 @@ namespace Parser
             }
         }
 
+        /// <summary>
+        /// Parse normal text
+        /// </summary>
+        /// <param name="context"></param>
+        /// <param name="escapedPart"></param>
+        /// <returns></returns>
         private TextPart ParseTextPart(ParserContext context, bool escapedPart)
         {
             var sb = new StringBuilder();
@@ -64,7 +70,11 @@ namespace Parser
             return new TextPart(sb.ToString(), escapedPart);
         }
 
-
+        /// <summary>
+        /// Parse after found {
+        /// </summary>
+        /// <param name="context"></param>
+        /// <returns></returns>
         private IPart ParseBracketPart(ParserContext context)
         {
             foreach (var c in context.GetNext())
@@ -108,7 +118,12 @@ namespace Parser
 
         }
 
-
+        /// <summary>
+        /// Parse after {@, {$, {0-9, {a-z
+        /// </summary>
+        /// <param name="context"></param>
+        /// <param name="type"></param>
+        /// <returns></returns>
         private IPart ParseHole(ParserContext context, HoleType type)
         {
             var nameSb = new StringBuilder();

@@ -27,6 +27,12 @@ namespace Parser.Tests
         [InlineData(" {1} ")] 
         [InlineData(" {2} ")] 
         [InlineData(" {3} {4} {9} {8} {5} {6} {7}")] 
+        [InlineData(" {{ ")] 
+        [InlineData("{{ ")] 
+        [InlineData(" {{")] 
+        [InlineData(" }} ")] 
+        [InlineData("}} ")] 
+        [InlineData(" }}")] 
         public void TestSimple(string input)
         {
             var parser = new TemplateParser();
