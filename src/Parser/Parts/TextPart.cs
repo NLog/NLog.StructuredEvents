@@ -8,11 +8,6 @@ namespace Parser
         private readonly char? _escapeChar;
         readonly string _text;
 
-        /// <summary>
-        /// Escpaped text
-        /// </summary>
-        private bool _escaped;
-
         /// <summary>Initializes a new instance of the <see cref="T:System.Object" /> class.</summary>
         public TextPart(char c, char escapeChar)
         {
