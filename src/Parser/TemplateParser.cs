@@ -1,183 +1,135 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+using static System.Diagnostics.Debug;
 
 namespace Parser
 {
     public class TemplateParser
     {
-        public PartList Parse(string template)
+        public static PartList Parse(string template)
         {
-            if (!string.IsNullOrEmpty(template))
-            {
-                var context = new ParserContext(template);
-                var parts = Parse(context);
-                return new PartList(parts);
-
-            }
-            return new PartList();
+            if (template == null) 
+                throw new ArgumentNullException(nameof(template));
+            var parser = new TemplateParser(template);
+            return parser.Parse();
         }
 
-        private IEnumerable<IPart> Parse(ParserContext context)
+        private static readonly char[] HoleDelimiters = new[] { ':', '}' };
+        private static readonly char[] TextDelimiters = new[] { '{', '}' };
+        private readonly string template;
+        private readonly int len;
+        private int pos = 0, holeIndex = 0;
+        private PartList parts = null;
+
+        private TemplateParser(string template)
         {
+            this.template = template;
+            this.len = template.Length;
+        }
 
-            foreach (var c in context.GetNext())
+        private PartList Parse()
+        {
+            try
             {
-
-                if (c == '{')
+                parts = new PartList();
+                while (pos < len)
                 {
-                    context.CharIndex++;
-                    yield return ParseOpenBracketPart(context);
+                    char c = Peek();
+                    if (c == '{')
+                        ParseOpenBracketPart();
+                    else if (c == '}')
+                        ParseCloseBracketPart();
+                    else
+                        ParseTextPart();
                 }
-                else if (c == '}')
-                {
-                    context.CharIndex++;
-                    yield return ParseCloseBracketPart(context);
-                }
-                else
-                {
-                    yield return ParseTextPart(context);
-                }
-
-
+                return parts;
+            }
+            catch (IndexOutOfRangeException ex)
+            {
+                throw new Exception("Unexpected end of template", ex);  // TODO
             }
         }
 
-        /// <summary>
-        /// Parse normal text
-        /// </summary>
-        /// <param name="context"></param>
-        /// <returns></returns>
-        private TextPart ParseTextPart(ParserContext context)
+        private void ParseTextPart()
         {
-            var sb = new StringBuilder();
-
-
-            foreach (var c in context.GetNext())
-            {
-                if (c == '{' || c == '}')
-                {
-                    //done
-
-                    context.CharIndex--; //re-read { (todo fix)
-                    return new TextPart(sb.ToString());
-                }
-                else
-                {
-                    sb.Append(c);
-                }
-
-            }
-            return new TextPart(sb.ToString());
+            string text = ReadUntil(TextDelimiters, required: false);
+            parts.Add(new TextPart(text));
         }
 
-        private IPart ParseCloseBracketPart(ParserContext context)
+        private void ParseOpenBracketPart()
         {
-            var nextChar = context.GetNext().FirstOrDefault();
-            if (nextChar == '}')
+            Skip('{');
+            char c = Peek();
+            switch (c)
             {
-                return new TextPart('}', '}');
+                case '{':
+                    Skip('{');
+                    parts.Add(new TextPart('{', '{'));
+                    return;
+                case '@':
+                    Skip('@');
+                    ParseHole(HoleType.Destructuring);
+                    return;
+                case '$':
+                    Skip('$');
+                    ParseHole(HoleType.Stringification);
+                    return;
+                default:
+                    // TODO: "0a" is wrong of course
+                    ParseHole(c >= '0' && c <= '9' ? HoleType.Numeric : HoleType.Text);
+                    return;
             }
-            throw new Exception("invalid close } on index " + context.CharIndex);
-
         }
 
-        /// <summary>
-        /// Parse after found {
-        /// </summary>
-        /// <param name="context"></param>
-        /// <returns></returns>
-        private IPart ParseOpenBracketPart(ParserContext context)
+        private void ParseCloseBracketPart()
         {
-            foreach (var c in context.GetNext())
-            {
-                switch (c)
-                {
-                    case '{':
-                        {
-                            return new TextPart('{', '{');
-                        }
-                    case '@':
-                        {
-                            //skip @
-                            context.CharIndex++;
-                            return ParseHole(context, HoleType.Destructuring);
-                        }
-                    case '$':
-                        {
-                            //skip $
-                            context.CharIndex++;
-                            return ParseHole(context, HoleType.Stringification);
-                        }
-                    case '0':
-                    case '1':
-                    case '2':
-                    case '3':
-                    case '4':
-                    case '5':
-                    case '6':
-                    case '7':
-                    case '8':
-                    case '9':
-                        {
-                            //todo "0a" is wrong of course
-                            return ParseHole(context, HoleType.Numeric);
-                        }
-                    default:
-                        return ParseHole(context, HoleType.Text);
-                }
-            }
-            throw new Exception("invalid close { on index " + context.CharIndex);
-
+            Skip('}');
+            if (Read() != '}')
+                throw new Exception("Parse error"); // TODO
+            parts.Add(new TextPart('}', '}'));
         }
 
-        /// <summary>
-        /// Parse after {@, {$, {0-9, {a-z
-        /// </summary>
-        /// <param name="context"></param>
-        /// <param name="type"></param>
-        /// <returns></returns>
-        private IPart ParseHole(ParserContext context, HoleType type)
+        private void ParseHole(HoleType type)
         {
-            var nameSb = new StringBuilder();
-
-            foreach (var c in context.GetNext())
-            {
-                switch (c)
-                {
-                    case ':':
-                        {
-                            context.CharIndex++;
-                            var format = ParseFormat(context);
-                            //done
-                            return new HolePart(nameSb.ToString(), type, context.PartIndex++, format);
-                        }
-                    case '}':
-                        {
-                            //done
-                            return new HolePart(nameSb.ToString(), type, context.PartIndex++, null);
-                        }
-                    default:
-                        nameSb.Append(c);
-                        break;
-
-                }
-            }
-            //todo
-            throw new Exception("Hole not correct on index "+  context.CharIndex);
+            string name = ReadUntil(HoleDelimiters);
+            string format = Peek() == ':' ? ParseFormat() : null;
+            Skip('}');
+            parts.Add(new HolePart(name, type, holeIndex++, format));
         }
 
-        private string ParseFormat(ParserContext context)
+        private string ParseFormat()
         {
-            var formatSb = new StringBuilder();
-            foreach (var c in context.GetNext())
-            {
-                //done on }
-                if (c != '}')
-                    formatSb.Append(c);
-            }
-            return formatSb.ToString();
+            Skip(':');
+            return ReadUntil('}');
+        }
+
+        private char Peek() => template[pos];
+
+        private char Read() => template[pos++];
+
+        private void Skip(char c)
+        {
+            Assert(template[pos] == c);
+            pos++;
+        }
+
+        private string ReadUntil(char search, bool required = true)
+        {
+            int start = pos;
+            int i = template.IndexOf(search, pos);
+            if (i == -1 && required)
+                throw new Exception("Missing char");  // TODO
+            pos = i == -1 ? len : i;
+            return template.Substring(start, pos - start);
+        }
+
+        private string ReadUntil(char[] search, bool required = true)
+        {
+            int start = pos;
+            int i = template.IndexOfAny(search, pos);
+            if (i == -1 && required)
+                throw new Exception("Missing char");  // TODO
+            pos = i == -1 ? len : i;
+            return template.Substring(start, pos - start);
         }
     }
 }
