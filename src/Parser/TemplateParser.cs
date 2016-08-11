@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using static System.Diagnostics.Debug;
 
 namespace Parser
@@ -43,9 +44,9 @@ namespace Parser
                 }
                 return parts;
             }
-            catch (IndexOutOfRangeException ex)
+            catch (IndexOutOfRangeException)
             {
-                throw new Exception("Unexpected end of template", ex);  // TODO
+                throw new TemplateParserException("Unexpected end of template.");
             }
         }
 
@@ -84,7 +85,7 @@ namespace Parser
         {
             Skip('}');
             if (Read() != '}')
-                throw new Exception("Parse error"); // TODO
+                throw new TemplateParserException($"Unexpected '}}' at position {pos-2}.");
             parts.Add(new TextPart('}', '}'));
         }
 
@@ -99,6 +100,7 @@ namespace Parser
         private string ParseFormat()
         {
             Skip(':');
+            // TODO: Escaped }} in formats?
             return ReadUntil('}');
         }
 
@@ -117,7 +119,7 @@ namespace Parser
             int start = pos;
             int i = template.IndexOf(search, pos);
             if (i == -1 && required)
-                throw new Exception("Missing char");  // TODO
+                throw new TemplateParserException($"Reached end of tempalte while expecting '{search}'.");
             pos = i == -1 ? len : i;
             return template.Substring(start, pos - start);
         }
@@ -127,7 +129,10 @@ namespace Parser
             int start = pos;
             int i = template.IndexOfAny(search, pos);
             if (i == -1 && required)
-                throw new Exception("Missing char");  // TODO
+            {
+                var formattedChars = string.Join(", ", search.Select(c => "'" + c + "'").ToArray()); 
+                throw new TemplateParserException($"Reached end of template while expecting one of {formattedChars}.");
+            }
             pos = i == -1 ? len : i;
             return template.Substring(start, pos - start);
         }

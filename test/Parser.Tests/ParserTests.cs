@@ -57,7 +57,7 @@ namespace Parser.Tests
         [InlineData("{}}{")]
         public void ThrowException(string input)
         {
-            Assert.Throws<Exception>(() => TemplateParser.Parse(input));
+            Assert.Throws<TemplateParserException>(() => TemplateParser.Parse(input));
         }
     }
 }
