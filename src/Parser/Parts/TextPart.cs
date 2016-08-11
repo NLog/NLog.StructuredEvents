@@ -5,15 +5,7 @@ namespace Parser
     [DebuggerDisplay("{Describe}")]
     public class TextPart : IPart
     {
-        private readonly char? _escapeChar;
         readonly string _text;
-
-        /// <summary>Initializes a new instance of the <see cref="T:System.Object" /> class.</summary>
-        public TextPart(char c, char escapeChar)
-        {
-            _escapeChar = escapeChar;
-            _text = c.ToString();
-        }
 
         /// <summary>Initializes a new instance of the <see cref="T:System.Object" /> class.</summary>
         public TextPart(string text)
@@ -25,13 +17,10 @@ namespace Parser
         /// <returns>A string that represents the current object.</returns>
         private string Describe => $"Text: {_text}";
 
-        #region Overrides of Object
+        #region IPart implementation
 
-        public string Print()
-        {
-            return _escapeChar + _text;
-        }
-
+        public string Print() => _text;
+        
         #endregion
     }
 }

@@ -64,7 +64,7 @@ namespace Parser
             {
                 case '{':
                     Skip('{');
-                    parts.Add(new TextPart('{', '{'));
+                    parts.Add(EscapePart.OpenBrace);
                     return;
                 case '@':
                     Skip('@');
@@ -86,7 +86,7 @@ namespace Parser
             Skip('}');
             if (Read() != '}')
                 throw new TemplateParserException($"Unexpected '}}' at position {pos-2}.");
-            parts.Add(new TextPart('}', '}'));
+            parts.Add(EscapePart.CloseBrace);
         }
 
         private void ParseHole(HoleType type)
