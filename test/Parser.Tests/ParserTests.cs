@@ -40,13 +40,11 @@ namespace Parser.Tests
         [InlineData(" {$stringify} ")] 
         public void ParseAndPrint(string input)
         {
-            var parser = new TemplateParser();
-            var parts = parser.Parse(input);
+            var parts = TemplateParser.Parse(input);
 
             //toString will reconstuct everthing
             var printed = parts.Print();
             Assert.Equal(input, printed);
-
         }
 
         [Theory]
@@ -59,9 +57,7 @@ namespace Parser.Tests
         [InlineData("{}}{")]
         public void ThrowException(string input)
         {
-            var parser = new TemplateParser();
-            Assert.Throws<Exception>(() => parser.Parse(input));
+            Assert.Throws<Exception>(() => TemplateParser.Parse(input));
         }
-
     }
 }
