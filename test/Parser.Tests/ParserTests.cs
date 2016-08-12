@@ -21,23 +21,23 @@ namespace Parser.Tests
         [InlineData("{name} is my name")]
         [InlineData(" {name} is my name")]
         [InlineData("{multiple}{parameters}")]
-        [InlineData("I have {{text}} and {{0}}")] 
-        [InlineData("{{text}}{{0}}")] 
-        [InlineData(" {{text}}{{0}} ")] 
-        [InlineData(" {0} ")] 
-        [InlineData(" {1} ")] 
-        [InlineData(" {2} ")] 
-        [InlineData(" {3} {4} {9} {8} {5} {6} {7}")] 
-        [InlineData(" {{ ")] 
-        [InlineData("{{ ")] 
-        [InlineData(" {{")] 
-        [InlineData(" }} ")] 
-        [InlineData("}} ")] 
-        [InlineData(" }}")] 
-        [InlineData("{0:000}")] 
-        [InlineData("{aaa:000}")] 
-        [InlineData(" {@destructre} ")] 
-        [InlineData(" {$stringify} ")] 
+        [InlineData("I have {{text}} and {{0}}")]
+        [InlineData("{{text}}{{0}}")]
+        [InlineData(" {{text}}{{0}} ")]
+        [InlineData(" {0} ")]
+        [InlineData(" {1} ")]
+        [InlineData(" {2} ")]
+        [InlineData(" {3} {4} {9} {8} {5} {6} {7}")]
+        [InlineData(" {{ ")]
+        [InlineData("{{ ")]
+        [InlineData(" {{")]
+        [InlineData(" }} ")]
+        [InlineData("}} ")]
+        [InlineData(" }}")]
+        [InlineData("{0:000}")]
+        [InlineData("{aaa:000}")]
+        [InlineData(" {@destructre} ")]
+        [InlineData(" {$stringify} ")]
         public void ParseAndPrint(string input)
         {
             var parts = TemplateParser.Parse(input);
@@ -59,5 +59,37 @@ namespace Parser.Tests
         {
             Assert.Throws<TemplateParserException>(() => TemplateParser.Parse(input));
         }
+
+
+        public class Car
+        {
+            public Car()
+            {
+            }
+
+            public Car(string brand, int horsePower)
+            {
+                Brand = brand;
+                HorsePower = horsePower;
+            }
+
+            public string Brand { get; set; }
+            public int HorsePower { get; set; }
+
+
+        }
+
+        [Fact]
+
+        public void Formattable_car()
+        {
+            //test with debugger
+            var car = new Car("Fiat", 50);
+            var text = FormattableStringLogger.Log($"log {car:capture1} {car} {car:@capture2}");
+             Assert.True(true);
+        }
+
+
+
     }
 }
