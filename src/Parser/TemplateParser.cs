@@ -14,7 +14,8 @@ namespace Parser
             return parser.Parse();
         }
 
-        private static readonly char[] HoleDelimiters = { ':', '}' ,',' };
+        private static readonly char[] HoleDelimiters = { ',', ':', '}' };
+        private static readonly char[] AlignmentDelimiters = { ':', '}' };
         private static readonly char[] TextDelimiters = { '{', '}' };
         private readonly string _template;
         private readonly int _length;
@@ -109,7 +110,7 @@ namespace Parser
         {
             Skip(',');
             //tood don't parse non-numeric?
-            return ReadUntil(new []{ ':','}'});
+            return ReadUntil(AlignmentDelimiters);
         }
 
         private char Peek() => _template[_position];
