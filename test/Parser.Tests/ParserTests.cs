@@ -47,6 +47,38 @@ namespace Parser.Tests
             Assert.Equal(input, printed);
         }
 
+
+        [Theory]
+        [InlineData("{0}", HoleType.Numeric)]
+        [InlineData("{1}", HoleType.Numeric)]
+        [InlineData("{2}", HoleType.Numeric)]
+        [InlineData("{3}", HoleType.Numeric)]
+        [InlineData("{4}", HoleType.Numeric)]
+        [InlineData("{5}", HoleType.Numeric)]
+        [InlineData("{6}", HoleType.Numeric)]
+        [InlineData("{7}", HoleType.Numeric)]
+        [InlineData("{8}", HoleType.Numeric)]
+        [InlineData("{9}", HoleType.Numeric)]
+        [InlineData("{a}", HoleType.Text)]
+        [InlineData("{A}", HoleType.Text)]
+        [InlineData("{aaa}", HoleType.Text)]
+        [InlineData("{@a}", HoleType.Destructuring)]
+        [InlineData("{@A}", HoleType.Destructuring)]
+        [InlineData("{@aaa}", HoleType.Destructuring)]
+        [InlineData("{$a}", HoleType.Stringification)]
+        [InlineData("{$A}", HoleType.Stringification)]
+        [InlineData("{$aaa}", HoleType.Stringification)]
+        public void ParseHoleType(string input, HoleType holeType)
+        {
+            var parts = TemplateParser.Parse(input);
+
+            Assert.Equal(1, parts.Count);
+
+            var holePart = parts.OfType<HolePart>().Single();
+            Assert.Equal(holeType, holePart.HoleType);
+            Assert.Equal(0, holePart.HoleIndex);
+        }
+
         [Theory]
         [InlineData(" {0,-10:nl-nl} ", -10, "nl-nl")]
         [InlineData(" {0,-10} ", -10, null)]
@@ -84,14 +116,22 @@ namespace Parser.Tests
         [Theory]
         [InlineData("Hello {0")]
         [InlineData("Hello 0}")]
+        [InlineData("Hello {a:")]
         [InlineData("{")]
         [InlineData("}")]
         [InlineData("}}}")]
         [InlineData("}}}{")]
         [InlineData("{}}{")]
-        public void ThrowException(string input)
+        public void ThrowsTemplateParserException(string input)
         {
             Assert.Throws<TemplateParserException>(() => TemplateParser.Parse(input));
+        }
+
+        [Theory]
+        [InlineData(null)]
+        public void ThrowsArgumentNullException(string input)
+        {
+            Assert.Throws<ArgumentNullException>(() => TemplateParser.Parse(input));
         }
     }
 }

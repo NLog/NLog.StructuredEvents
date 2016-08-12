@@ -2,7 +2,7 @@ using System.Diagnostics;
 
 namespace Parser
 {
-    [DebuggerDisplay("{Describe}")]
+    [DebuggerDisplay("Text: {Text}")]
     public class TextPart : IPart
     {
         public string Text { get; }
@@ -12,10 +12,6 @@ namespace Parser
         {
             Text = text;
         }
-
-        /// <summary>Returns a string that represents the current object.</summary>
-        /// <returns>A string that represents the current object.</returns>
-        private string Describe => $"Text: {Text}";
 
         #region IPart implementation
 

@@ -4,7 +4,7 @@ using System.Diagnostics;
 namespace Parser
 {
 
-    [DebuggerDisplay("{Describe}")]
+    [DebuggerDisplay("Hole: Name: {Name}, HoleIndex: {HoleIndex}, Format: {Format}, Type: {HoleType}")]
     public class HolePart : IPart
     {
         public string Name { get; }
@@ -22,10 +22,6 @@ namespace Parser
             HoleType = type;
             Aligment = aligment;
         }
-
-        /// <summary>Returns a string that represents the current object.</summary>
-        /// <returns>A string that represents the current object.</returns>
-        private string Describe => $"Hole: Name: {Name}, HoleIndex: {HoleIndex}, Format: {Format}, Type: {HoleType}";
 
         private string GetNameAndFormat()
         {
@@ -45,12 +41,9 @@ namespace Parser
                     return "{@" + nameAndFormat + "}";
                 case HoleType.Stringification:
                     return "{$" + nameAndFormat + "}";
-                case HoleType.Numeric:
-                case HoleType.Text:
-                    return "{" + nameAndFormat + "}";
-
                 default:
-                    throw new ArgumentOutOfRangeException();
+                    //else HoleType.Numeric / HoleType.Text:
+                    return "{" + nameAndFormat + "}";
             }
         }
     }

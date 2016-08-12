@@ -2,23 +2,29 @@ using System.Diagnostics;
 
 namespace Parser
 {
-    [DebuggerDisplay("{Describe}")]
+
+    [DebuggerDisplay("Escaped Text: {Escaped}")]
     public class EscapePart : IPart
     {
         public static readonly EscapePart OpenBrace = new EscapePart("{", "{{");
         public static readonly EscapePart CloseBrace = new EscapePart("}", "}}");
 
-        private readonly string _text;
-        private readonly string _escaped;
+        /// <summary>
+        /// Text without escape chars
+        /// </summary>
+        public string Text { get; }
+
+        /// <summary>
+        /// Escaped representation of <see cref="Text"/>
+        /// </summary>
+        public string Escaped { get; }
 
         private EscapePart(string text, string escaped)
         {
-            _text = text; 
-            _escaped = escaped;
+            Text = text; 
+            Escaped = escaped;
         }
 
-        private string Describe => "Text: " + _text;
-
-        public string Print() => _escaped;         
+        public string Print() => Escaped;         
     }
 }
