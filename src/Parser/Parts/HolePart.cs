@@ -10,11 +10,11 @@ namespace Parser
         public string Name { get; }
         public int HoleIndex { get; }
         public string Format { get; }
-        public string Aligment { get; }
+        public int? Aligment { get; }
         public HoleType HoleType { get; }
 
         /// <summary>Initializes a new instance of the <see cref="T:System.Object" /> class.</summary>
-        public HolePart(string name, HoleType type, int holeIndex, string format, string aligment)
+        public HolePart(string name, HoleType type, int holeIndex, string format, int? aligment)
         {
             Name = name;
             HoleIndex = holeIndex;

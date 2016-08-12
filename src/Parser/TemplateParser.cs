@@ -77,8 +77,7 @@ namespace Parser
                     ParseHole(HoleType.Stringification);
                     return;
                 default:
-                    // TODO: "0a" is wrong of course
-                    ParseHole(c >= '0' && c <= '9' ? HoleType.Numeric : HoleType.Text);
+                    ParseHole(HoleType.Normal);
                     return;
             }
         }
@@ -93,11 +92,34 @@ namespace Parser
 
         private void ParseHole(HoleType type)
         {
-            string name = ReadUntil(HoleDelimiters);
-            string aligment = Peek() == ',' ? ParseAlignment() : null;
+            int position;
+            string name = ParseName(out position); 
+            int? aligment = Peek() == ',' ? ParseAlignment() : (int?)null;
             string format = Peek() == ':' ? ParseFormat() : null;
             Skip('}');
-            _parts.Add(new HolePart(name, type, _holeIndex++, format, aligment));
+            _parts.Add(new HolePart(name, type, position, format, aligment));
+        }
+
+        private string ParseName(out int parameterIndex)
+        {    
+            parameterIndex = -1;        
+            char c = Peek();
+            // If the name matches /^\d+ *$/ we consider it positional
+            if (c >= '0' && c <= '9')
+            {
+                int start = _position;
+                int parsed = ReadInt();
+                SkipSpaces();
+                c = Peek();
+                if (c == '}' || c == ':' || c == ',')
+                    parameterIndex = parsed;
+                _position = start;        
+            }
+
+            if (parameterIndex == -1)
+                _parts.IsPositional = false;
+
+            return ReadUntil(HoleDelimiters);            
         }
 
         private string ParseFormat()
@@ -106,11 +128,15 @@ namespace Parser
             // TODO: Escaped }} in formats?
             return ReadUntil('}');
         }
-        private string ParseAlignment()
+
+        private int ParseAlignment()
         {
             Skip(',');
-            //tood don't parse non-numeric?
-            return ReadUntil(AlignmentDelimiters);
+            int i = ReadInt();
+            char next = Peek();
+            if (next != ':' && next != '}')
+                throw new TemplateParserException($"Expected ':' or '}}' but found '{next}' instead.", _position);
+            return i;
         }
 
         private char Peek() => _template[_position];
@@ -119,8 +145,45 @@ namespace Parser
 
         private void Skip(char c)
         {
+            // Can be out of bounds, but never in correct use (expects a required char).
             Assert(_template[_position] == c);
             _position++;
+        }
+
+        private void SkipSpaces()
+        {
+            // Can be out of bounds, but never in correct use (inside a hole).
+            while (_template[_position] == ' ') _position++;
+        }
+
+        private int ReadInt()
+        {               
+            SkipSpaces();                                
+                        
+            bool negative = false;
+            if (Peek() == '-')
+            {
+                negative = true;
+                _position++;
+            }
+
+            int i = 0;
+            bool hasDigits = false;
+            while (true) 
+            {
+                // Can be out of bounds, but never in correct use (inside a hole).
+                char c = Peek();
+                int digit = c - '0';
+                if (digit < 0 || digit > 9) break;
+                hasDigits = true;
+                _position++;
+                i = i * 10 + digit;
+            }
+            if (!hasDigits) 
+                throw new TemplateParserException("An integer is expected", _position);
+            
+            SkipSpaces();
+            return negative ? -i : i;
         }
 
         private string ReadUntil(char search, bool required = true)

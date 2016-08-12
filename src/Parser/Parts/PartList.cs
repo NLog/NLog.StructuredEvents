@@ -5,10 +5,10 @@ namespace Parser
 {
     public class PartList : List<IPart>
     {
-        /// <summary>Initializes a new instance of the <see cref="T:System.Collections.Generic.List`1" /> class that is empty and has the default initial capacity.</summary>
+        public bool IsPositional { get; set; } = true;
+        
         public PartList()
-        {
-        }
+        { }
 
         public string Print()
         {

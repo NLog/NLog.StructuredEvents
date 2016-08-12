@@ -3,21 +3,16 @@ namespace Parser
     public enum HoleType
     {
         /// <summary>
-        ///  destructuring operator (@) 
+        /// normal {x}
+        /// </summary>
+        Normal,
+        /// <summary>
+        ///  destructuring operator {@x} 
         /// </summary>
         Destructuring,
         /// <summary>
-        /// stringification operator ($) 
+        /// stringification operator {$x} 
         /// </summary>
         Stringification,
-        /// <summary>
-        /// {0} etc
-        /// </summary>
-        Numeric,
-        /// <summary>
-        /// {car} etc
-        /// </summary>
-        Text
-
     }
 }
