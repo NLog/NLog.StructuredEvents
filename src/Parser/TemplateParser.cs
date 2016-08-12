@@ -14,25 +14,26 @@ namespace Parser
             return parser.Parse();
         }
 
-        private static readonly char[] HoleDelimiters = new[] { ':', '}' };
-        private static readonly char[] TextDelimiters = new[] { '{', '}' };
-        private readonly string template;
-        private readonly int len;
-        private int pos = 0, holeIndex = 0;
-        private PartList parts = null;
+        private static readonly char[] HoleDelimiters = { ':', '}' };
+        private static readonly char[] TextDelimiters = { '{', '}' };
+        private readonly string _template;
+        private readonly int _length;
+        private int _position;
+        private int _holeIndex;
+        private PartList _parts;
 
         private TemplateParser(string template)
         {
-            this.template = template;
-            this.len = template.Length;
+            _template = template;
+            _length = template.Length;
         }
 
         private PartList Parse()
         {
             try
             {
-                parts = new PartList();
-                while (pos < len)
+                _parts = new PartList();
+                while (_position < _length)
                 {
                     char c = Peek();
                     if (c == '{')
@@ -42,7 +43,7 @@ namespace Parser
                     else
                         ParseTextPart();
                 }
-                return parts;
+                return _parts;
             }
             catch (IndexOutOfRangeException)
             {
@@ -53,7 +54,7 @@ namespace Parser
         private void ParseTextPart()
         {
             string text = ReadUntil(TextDelimiters, required: false);
-            parts.Add(new TextPart(text));
+            _parts.Add(new TextPart(text));
         }
 
         private void ParseOpenBracketPart()
@@ -64,7 +65,7 @@ namespace Parser
             {
                 case '{':
                     Skip('{');
-                    parts.Add(EscapePart.OpenBrace);
+                    _parts.Add(EscapePart.OpenBrace);
                     return;
                 case '@':
                     Skip('@');
@@ -85,8 +86,8 @@ namespace Parser
         {
             Skip('}');
             if (Read() != '}')
-                throw new TemplateParserException($"Unexpected '}}' at position {pos-2}.");
-            parts.Add(EscapePart.CloseBrace);
+                throw new TemplateParserException($"Unexpected '}}' at position {_position-2}.");
+            _parts.Add(EscapePart.CloseBrace);
         }
 
         private void ParseHole(HoleType type)
@@ -94,7 +95,7 @@ namespace Parser
             string name = ReadUntil(HoleDelimiters);
             string format = Peek() == ':' ? ParseFormat() : null;
             Skip('}');
-            parts.Add(new HolePart(name, type, holeIndex++, format));
+            _parts.Add(new HolePart(name, type, _holeIndex++, format));
         }
 
         private string ParseFormat()
@@ -104,37 +105,37 @@ namespace Parser
             return ReadUntil('}');
         }
 
-        private char Peek() => template[pos];
+        private char Peek() => _template[_position];
 
-        private char Read() => template[pos++];
+        private char Read() => _template[_position++];
 
         private void Skip(char c)
         {
-            Assert(template[pos] == c);
-            pos++;
+            Assert(_template[_position] == c);
+            _position++;
         }
 
         private string ReadUntil(char search, bool required = true)
         {
-            int start = pos;
-            int i = template.IndexOf(search, pos);
+            int start = _position;
+            int i = _template.IndexOf(search, _position);
             if (i == -1 && required)
                 throw new TemplateParserException($"Reached end of tempalte while expecting '{search}'.");
-            pos = i == -1 ? len : i;
-            return template.Substring(start, pos - start);
+            _position = i == -1 ? _length : i;
+            return _template.Substring(start, _position - start);
         }
 
         private string ReadUntil(char[] search, bool required = true)
         {
-            int start = pos;
-            int i = template.IndexOfAny(search, pos);
+            int start = _position;
+            int i = _template.IndexOfAny(search, _position);
             if (i == -1 && required)
             {
                 var formattedChars = string.Join(", ", search.Select(c => "'" + c + "'").ToArray()); 
                 throw new TemplateParserException($"Reached end of template while expecting one of {formattedChars}.");
             }
-            pos = i == -1 ? len : i;
-            return template.Substring(start, pos - start);
+            _position = i == -1 ? _length : i;
+            return _template.Substring(start, _position - start);
         }
     }
 }
