@@ -14,7 +14,7 @@ namespace Parser
             return parser.Parse();
         }
 
-        private static readonly char[] HoleDelimiters = { ':', '}' };
+        private static readonly char[] HoleDelimiters = { ':', '}' ,',' };
         private static readonly char[] TextDelimiters = { '{', '}' };
         private readonly string _template;
         private readonly int _length;
@@ -93,9 +93,10 @@ namespace Parser
         private void ParseHole(HoleType type)
         {
             string name = ReadUntil(HoleDelimiters);
+            string aligment = Peek() == ',' ? ParseAlignment() : null;
             string format = Peek() == ':' ? ParseFormat() : null;
             Skip('}');
-            _parts.Add(new HolePart(name, type, _holeIndex++, format));
+            _parts.Add(new HolePart(name, type, _holeIndex++, format, aligment));
         }
 
         private string ParseFormat()
@@ -103,6 +104,12 @@ namespace Parser
             Skip(':');
             // TODO: Escaped }} in formats?
             return ReadUntil('}');
+        }
+        private string ParseAlignment()
+        {
+            Skip(',');
+            //tood don't parse non-numeric?
+            return ReadUntil(new []{ ':','}'});
         }
 
         private char Peek() => _template[_position];

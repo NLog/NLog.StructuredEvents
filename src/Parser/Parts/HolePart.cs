@@ -7,38 +7,39 @@ namespace Parser
     [DebuggerDisplay("{Describe}")]
     public class HolePart : IPart
     {
-        private string _name;
-        private int _holeIndex;
-        private string _format;
-
-        private HoleType _type;
+        public string Name { get; }
+        public int HoleIndex { get; }
+        public string Format { get; }
+        public string Aligment { get; }
+        public HoleType HoleType { get; }
 
         /// <summary>Initializes a new instance of the <see cref="T:System.Object" /> class.</summary>
-        public HolePart(string name, HoleType type, int holeIndex, string format)
+        public HolePart(string name, HoleType type, int holeIndex, string format, string aligment)
         {
-            this._name = name;
-            _holeIndex = holeIndex;
-            _format = format;
-            _type = type;
+            Name = name;
+            HoleIndex = holeIndex;
+            Format = format;
+            HoleType = type;
+            Aligment = aligment;
         }
 
         /// <summary>Returns a string that represents the current object.</summary>
         /// <returns>A string that represents the current object.</returns>
-        private string Describe => $"Hole: Name: {_name}, HoleIndex: {_holeIndex}, Format: {_format}, Type: {_type}";
+        private string Describe => $"Hole: Name: {Name}, HoleIndex: {HoleIndex}, Format: {Format}, Type: {HoleType}";
 
         private string GetNameAndFormat()
         {
-            if (_format != null)
+            if (Format != null)
             {
-                return _name + ":" + _format;
+                return Name + ":" + Format;
             }
-            return _name;
+            return Name;
         }
 
         public string Print()
         {
             var nameAndFormat = GetNameAndFormat();
-            switch (_type)
+            switch (HoleType)
             {
                 case HoleType.Destructuring:
                     return "{@" + nameAndFormat + "}";
