@@ -8,7 +8,8 @@ namespace Parser
         public static readonly EscapePart OpenBrace = new EscapePart("{", "{{");
         public static readonly EscapePart CloseBrace = new EscapePart("}", "}}");
 
-        private readonly string _text, _escaped;
+        private readonly string _text;
+        private readonly string _escaped;
 
         private EscapePart(string text, string escaped)
         {
