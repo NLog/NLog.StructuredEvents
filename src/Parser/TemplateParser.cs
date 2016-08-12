@@ -47,7 +47,7 @@ namespace Parser
             }
             catch (IndexOutOfRangeException)
             {
-                throw new TemplateParserException("Unexpected end of template.");
+                throw new TemplateParserException("Unexpected end of template.", _position);
             }
         }
 
@@ -86,7 +86,7 @@ namespace Parser
         {
             Skip('}');
             if (Read() != '}')
-                throw new TemplateParserException($"Unexpected '}}' at position {_position-2}.");
+                throw new TemplateParserException($"Unexpected '}}' ", _position-2);
             _parts.Add(EscapePart.CloseBrace);
         }
 
@@ -120,7 +120,7 @@ namespace Parser
             int start = _position;
             int i = _template.IndexOf(search, _position);
             if (i == -1 && required)
-                throw new TemplateParserException($"Reached end of tempalte while expecting '{search}'.");
+                throw new TemplateParserException($"Reached end of template while expecting '{search}'.", _position);
             _position = i == -1 ? _length : i;
             return _template.Substring(start, _position - start);
         }
@@ -132,7 +132,7 @@ namespace Parser
             if (i == -1 && required)
             {
                 var formattedChars = string.Join(", ", search.Select(c => "'" + c + "'").ToArray()); 
-                throw new TemplateParserException($"Reached end of template while expecting one of {formattedChars}.");
+                throw new TemplateParserException($"Reached end of template while expecting one of {formattedChars}.", _position);
             }
             _position = i == -1 ? _length : i;
             return _template.Substring(start, _position - start);
