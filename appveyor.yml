@@ -1,0 +1,9 @@
+version: 1.0.{build}
+build_script:
+- ps: .\build.ps1
+test_script:
+  - nuget.exe install OpenCover -ExcludeVersion
+  - OpenCover\tools\OpenCover.Console.exe -register:user -filter:"+[Parser]*" -target:"dotnet.exe" "-targetargs:test test\Parser.Tests" -returntargetcode -hideskipped:All -output:coverage.xml
+  - "SET PATH=C:\\Python34;C:\\Python34\\Scripts;%PATH%"
+  - pip install codecov
+  - codecov -f "coverage.xml"

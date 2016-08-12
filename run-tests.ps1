@@ -1,0 +1,2 @@
+dotnet restore 
+dotnet test test\Parser.Tests -c release                                                                                                                                                                                                     
