@@ -6,4 +6,6 @@ Yet Another Message Template parser
 
 
 
-Dual licensed: MIT/BSD
+Dual licensed: MIT/BSD (choose one ;))
+
+Fully backwards-compatible with Serilog's format and `String.Format`
