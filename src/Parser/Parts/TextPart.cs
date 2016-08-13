@@ -19,13 +19,13 @@ namespace Parser
         public string Print() => Text;
         public int RenderPart(StringBuilder sb, Renderer renderer, int argIndex, object[] args)
         {
-            renderer.RenderPart(sb, this);
+            sb.Append(Text);
             return argIndex;
         }
 
         public void RenderPartIndexed(StringBuilder sb, Renderer renderer, object[] args)
         {
-            renderer.RenderPart(sb, this);
+            sb.Append(Text);
         }
 
         #endregion

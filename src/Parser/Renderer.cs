@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Globalization;
 using System.Text;
 
@@ -34,44 +35,99 @@ namespace Parser
             return sb.ToString();
         }
 
-        public void RenderPart(StringBuilder sb, HolePart part, int holeIndex, bool allowQuoted, object[] args)
+        /// <summary>
+        /// Render hole
+        /// </summary>
+        /// <param name="sb"></param>
+        /// <param name="part"></param>
+        /// <param name="holeIndex"></param>
+        /// <param name="legacyMode"></param>
+        /// <param name="args"></param>
+        public void RenderHole(StringBuilder sb, HolePart part, int holeIndex, bool legacyMode, object[] args)
         {
             var val = args[holeIndex];
 
+            var convertedToString = false;
             if (part.HoleType == HoleType.Destructuring)
             {
                 //todo
             }
             else if (part.HoleType == HoleType.Stringification)
             {
-                //todo toString()
+                convertedToString = true;
+                val = val.ToString();
             }
+            
+            AppendVal(sb, part, val, legacyMode, convertedToString);
+        }
+   
 
-
-            //don't quote on format=l
-            var quote = allowQuoted && (part.Format != "l");
-            if (!quote)
+        /// <summary>
+        /// render value
+        /// </summary>
+        /// <param name="sb"></param>
+        /// <param name="part"></param>
+        /// <param name="val"></param>
+        /// <param name="legacyMode"></param>
+        /// <param name="convertedToString"></param>
+        private static void AppendVal(StringBuilder sb, HolePart part, object val, bool legacyMode,
+            bool convertedToString)
+        {
+            if (convertedToString || val is string || val is char)
             {
-                AppendVal(sb, part, val);
-                return;
-            }
-
-
-            if (val is string || val is char)
-            {
-                //renders string values in double quotes to more transparently
-                sb.Append('"');
-                sb.Append(val);
-                sb.Append('"');
+                //don't quote on format=l
+                var quote = !legacyMode && (part.Format != "l");
+                if (quote)
+                {
+                    //renders string values in double quotes to more transparently
+                    sb.Append('"');
+                    sb.Append(val);
+                    sb.Append('"');
+                }
+                else
+                {
+                    sb.Append(val);
+                }
             }
             else
             {
-                AppendVal(sb, part, val);
+                AppendNonString(sb, part, val, legacyMode);
             }
         }
 
-        private static void AppendVal(StringBuilder sb, HolePart part, object val)
+        /// <summary>
+        /// render a non-string value
+        /// </summary>
+        /// <param name="sb"></param>
+        /// <param name="part"></param>
+        /// <param name="val"></param>
+        /// <param name="legacyMode"></param>
+        private static void AppendNonString(StringBuilder sb, HolePart part, object val, bool legacyMode)
         {
+            if (!legacyMode)
+            {
+                var items = val as IEnumerable;
+                if (items != null)
+                {
+                    var isFirst = true;
+                    foreach (var valItem in items)
+                    {
+                        if (!isFirst)
+                        {
+                            sb.Append(',');
+                            sb.Append(' ');
+                        }
+                        else
+                        {
+                            isFirst = false;
+                        }
+
+                        AppendVal(sb, part, valItem, false, false);
+                    }
+                    return;
+                }
+            }
+
             if (part.Format != null)
             {
                 var formattable = val as IFormattable;
@@ -84,9 +140,6 @@ namespace Parser
             sb.Append(val);
         }
 
-        public void RenderPart(StringBuilder sb, TextPart part)
-        {
-            sb.Append(part.Text);
-        }
+   
     }
 }

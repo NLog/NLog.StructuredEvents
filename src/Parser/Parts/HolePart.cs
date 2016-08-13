@@ -53,12 +53,12 @@ namespace Parser
         public void RenderPartIndexed(StringBuilder sb, Renderer renderer, object[] args)
         {
             //no qoutes to be backwardscomp.
-            renderer.RenderPart(sb, this, this.HoleIndex, false, args);
+            renderer.RenderHole(sb, this, this.HoleIndex, true, args);
         }
 
         public int RenderPart(StringBuilder sb, Renderer renderer, int argIndex, object[] args)
         {
-            renderer.RenderPart(sb, this, argIndex, true, args);
+            renderer.RenderHole(sb, this, argIndex, false, args);
             return argIndex + 1;
         }
     }
