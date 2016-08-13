@@ -19,6 +19,7 @@ namespace Parser.Tests
         [InlineData(" {1} {0} {0}", new object[] { "a", "b" }, " b a a")]
         [InlineData(" message {1} {0} {0}", new object[] { "a", "b" }, " message b a a")]
         [InlineData(" message {{{1}}} {0} {0}", new object[] { "a", "b" }, " message {b} a a")]
+        [InlineData(" message {{{one}}} {two} {three}", new object[] { "a", "b", "c" }, " message {\"a\"} \"b\" \"c\"")]
         [InlineData(" message {{{1} {0} {0}}}", new object[] { "a", "b" }, " message {b a a}")]
         [InlineData(" completed in {time} sec", new object[] { 10 }, " completed in 10 sec")]
         [InlineData(" completed task {name} in {time} sec", new object[] { "test", 10 }, " completed task \"test\" in 10 sec")]
