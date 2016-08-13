@@ -48,11 +48,12 @@ namespace Parser
             var val = args[holeIndex];
 
             var convertedToString = false;
-            if (part.HoleType == HoleType.Destructuring)
-            {
-                //todo
-            }
-            else if (part.HoleType == HoleType.Stringification)
+            //if (part.HoleType == HoleType.Destructuring)
+            //{
+            //    //todo
+            //}
+            //else 
+            if (part.HoleType == HoleType.Stringification)
             {
                 convertedToString = true;
                 val = val.ToString();
