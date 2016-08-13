@@ -6,7 +6,7 @@ namespace Parser
 {
     public class TemplateParser
     {
-        public static PartList Parse(string template)
+        public static Template Parse(string template)
         {
             if (template == null) 
                 throw new ArgumentNullException(nameof(template));
@@ -17,22 +17,23 @@ namespace Parser
         private static readonly char[] HoleDelimiters = { ',', ':', '}' };
         private static readonly char[] AlignmentDelimiters = { ':', '}' };
         private static readonly char[] TextDelimiters = { '{', '}' };
+        private readonly Template _result;
         private readonly string _template;
         private readonly int _length;
         private int _position;
-        private PartList _parts;
+        private ushort _print;
 
         private TemplateParser(string template)
         {
+            _result = new Template(template);
             _template = template;
             _length = template.Length;
         }
 
-        private PartList Parse()
+        private Template Parse()
         {
             try
             {
-                _parts = new PartList();
                 while (_position < _length)
                 {
                     char c = Peek();
@@ -43,7 +44,11 @@ namespace Parser
                     else
                         ParseTextPart();
                 }
-                return _parts;
+                if (_print != 0)
+                    _result.Literals.Add(new Literal { Print = _print });
+
+                Assert(_result.Holes.Count == _result.Literals.Count(x => x.Skip > 0));
+                return _result;
             }
             catch (IndexOutOfRangeException)
             {
@@ -53,8 +58,7 @@ namespace Parser
 
         private void ParseTextPart()
         {
-            string text = ReadUntil(TextDelimiters, required: false);
-            _parts.Add(new TextPart(text));
+            _print = (ushort)CountUntil(TextDelimiters, required: false);
         }
 
         private void ParseOpenBracketPart()
@@ -65,7 +69,8 @@ namespace Parser
             {
                 case '{':
                     Skip('{');
-                    _parts.Add(EscapePart.OpenBrace);
+                    _result.Literals.Add(new Literal { Print = ++_print });
+                    _print = 0;
                     return;
                 case '@':
                     Skip('@');
@@ -86,17 +91,28 @@ namespace Parser
             Skip('}');
             if (Read() != '}')
                 throw new TemplateParserException($"Unexpected '}}' ", _position-2);
-            _parts.Add(EscapePart.CloseBrace);
+            _result.Literals.Add(new Literal { Print = ++_print });
+            _print = 0;
         }
 
         private void ParseHole(HoleType type)
         {
+            int start = _position;
             int position;
             string name = ParseName(out position); 
-            int? aligment = Peek() == ',' ? ParseAlignment() : (int?)null;
+            int alignment = Peek() == ',' ? ParseAlignment() : 0;
             string format = Peek() == ':' ? ParseFormat() : null;
             Skip('}');
-            _parts.Add(new HolePart(name, type, position, format, aligment));
+            _result.Literals.Add(new Literal { Print = _print, Skip = (ushort)(_position - start + (type == HoleType.Normal ? 1 : 2)) });
+            _print = 0;
+            _result.Holes.Add(new Hole 
+            { 
+                Name = name,
+                Format = format,
+                CaptureType = type,
+                Index = (byte)position,
+                Alignment = (short)alignment,
+            });
         }
 
         private string ParseName(out int parameterIndex)
@@ -116,7 +132,7 @@ namespace Parser
             }
 
             if (parameterIndex == -1)
-                _parts.IsPositional = false;
+                _result.IsPositional = false;
 
             return ReadUntil(HoleDelimiters);            
         }
@@ -198,6 +214,12 @@ namespace Parser
         private string ReadUntil(char[] search, bool required = true)
         {
             int start = _position;
+            return _template.Substring(start, CountUntil(search, required));
+        }
+
+        private int CountUntil(char[] search, bool required = true)
+        {
+            int start = _position;
             int i = _template.IndexOfAny(search, _position);
             if (i == -1 && required)
             {
@@ -205,7 +227,7 @@ namespace Parser
                 throw new TemplateParserException($"Reached end of template while expecting one of {formattedChars}.", _position);
             }
             _position = i == -1 ? _length : i;
-            return _template.Substring(start, _position - start);
+            return _position - start;
         }
     }
 }
