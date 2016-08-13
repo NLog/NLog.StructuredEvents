@@ -20,7 +20,6 @@ namespace Parser
         private readonly string _template;
         private readonly int _length;
         private int _position;
-        private int _holeIndex;
         private PartList _parts;
 
         private TemplateParser(string template)
