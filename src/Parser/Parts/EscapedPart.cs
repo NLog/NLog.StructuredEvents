@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using System.Text;
 
 namespace Parser
 {
@@ -25,6 +26,17 @@ namespace Parser
             Escaped = escaped;
         }
 
-        public string Print() => Escaped;         
+        public string Print() => Escaped;
+
+        public int RenderPart(StringBuilder sb, Renderer renderer, int argIndex, object[] args)
+        {
+            sb.Append(Text);
+            return argIndex;
+        }
+
+        public void RenderPartIndexed(StringBuilder sb, Renderer renderer, object[] args)
+        {
+            sb.Append(Text);
+        }
     }
 }

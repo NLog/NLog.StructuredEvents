@@ -1,5 +1,6 @@
 using System;
 using System.Diagnostics;
+using System.Text;
 
 namespace Parser
 {
@@ -45,6 +46,20 @@ namespace Parser
                     //else HoleType.Numeric / HoleType.Text:
                     return "{" + nameAndFormat + "}";
             }
+        }
+
+
+
+        public void RenderPartIndexed(StringBuilder sb, Renderer renderer, object[] args)
+        {
+            //no qoutes to be backwardscomp.
+            renderer.RenderPart(sb, this, this.HoleIndex, false, args);
+        }
+
+        public int RenderPart(StringBuilder sb, Renderer renderer, int argIndex, object[] args)
+        {
+            renderer.RenderPart(sb, this, argIndex, true, args);
+            return argIndex + 1;
         }
     }
 }

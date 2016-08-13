@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using System.Text;
 
 namespace Parser
 {
@@ -16,7 +17,17 @@ namespace Parser
         #region IPart implementation
 
         public string Print() => Text;
-        
+        public int RenderPart(StringBuilder sb, Renderer renderer, int argIndex, object[] args)
+        {
+            renderer.RenderPart(sb, this);
+            return argIndex;
+        }
+
+        public void RenderPartIndexed(StringBuilder sb, Renderer renderer, object[] args)
+        {
+            renderer.RenderPart(sb, this);
+        }
+
         #endregion
     }
 }
