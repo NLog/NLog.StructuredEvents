@@ -38,6 +38,11 @@ namespace Parser.Tests
         [InlineData("{aaa:000}")]
         [InlineData(" {@destructre} ")]
         [InlineData(" {$stringify} ")]
+        [InlineData(" {alignment,-10} ")]
+        [InlineData(" {alignment,10} ")]
+        [InlineData(" {0,10} ")]
+        [InlineData(" {0,-10} ")]
+        [InlineData(" {0,-10:test} ")]
         public void ParseAndPrint(string input)
         {
             var template = TemplateParser.Parse(input);
