@@ -5,7 +5,7 @@ namespace Parser
 {
     public class PartList : List<IPart>
     {
-        public bool IsPositional { get; set; } = true;
+        public bool? IsPositional { get; set; }
         
         public PartList()
         { }

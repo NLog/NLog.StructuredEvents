@@ -59,7 +59,6 @@ namespace Parser.Tests
         [InlineData("{-1}", false, -1)]
         [InlineData("{1.2}", false, -1)]
         [InlineData("{42r}", false, -1)]
-        [InlineData("{6} {x}", false, 6)]   // First is numeric, although not positional overall
         public void ParsePositional(string input, bool positional, int index)
         {
             var parts = TemplateParser.Parse(input);
@@ -161,7 +160,9 @@ namespace Parser.Tests
         [InlineData("{a,-2 :N0")]
         [InlineData("{a,-2.0")]
         [InlineData("{a,:N0}")]
-        [InlineData("{a,}")]        
+        [InlineData("{a,}")]
+        [InlineData("{6} {x}")]   // First is numeric, although not positional overall
+        [InlineData("{x} {1} {a}")]   // First is numeric, although not positional overall
         public void ThrowsTemplateParserException(string input)
         {
             Assert.Throws<TemplateParserException>(() => TemplateParser.Parse(input));

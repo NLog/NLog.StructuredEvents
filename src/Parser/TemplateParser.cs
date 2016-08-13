@@ -99,6 +99,11 @@ namespace Parser
             _parts.Add(new HolePart(name, type, position, format, aligment));
         }
 
+        /// <summary>
+        /// Parse hole name
+        /// </summary>
+        /// <param name="parameterIndex"></param>
+        /// <returns></returns>
         private string ParseName(out int parameterIndex)
         {    
             parameterIndex = -1;        
@@ -116,7 +121,23 @@ namespace Parser
             }
 
             if (parameterIndex == -1)
+            {
+                if (_parts.IsPositional == true)
+                {
+                    throw new TemplateParserException("Expected a numeric hole", _position);
+                }
+
                 _parts.IsPositional = false;
+            }
+            else
+            {
+                if (_parts.IsPositional == false)
+                {
+                    throw new TemplateParserException("Expected a named hole", _position);
+                }
+                _parts.IsPositional = true;
+            }
+               
 
             return ReadUntil(HoleDelimiters);            
         }
