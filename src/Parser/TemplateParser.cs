@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using static System.Diagnostics.Debug;
 
@@ -16,17 +17,28 @@ namespace Parser
 
         private static readonly char[] HoleDelimiters = { ',', ':', '}' };
         private static readonly char[] TextDelimiters = { '{', '}' };
-        private readonly Template _result;
-        private readonly string _template;
-        private readonly int _length;
+        private List<Literal> _literals = new List<Literal>();
+        private List<Hole> _holes = new List<Hole>();
+        private bool _isPositional = true;
+        private string _template;
+        private int _length;
         private int _position;
-        private ushort _print;
+        private int _literalLength;
 
         private TemplateParser(string template)
         {
-            _result = new Template(template);
             _template = template;
             _length = template.Length;
+        }
+
+        // Literals are added to the result list when:
+        // - a hole is encountered
+        // - an escape is encountered. The escape itself is always included in the preceding literal.
+        // - at the end of the template.
+        private void AddLiteral(int skip = 0)
+        {
+            _literals.Add(new Literal { Print = (ushort)_literalLength, Skip = (ushort)skip });
+            _literalLength = 0;
         }
 
         private Template Parse()
@@ -43,11 +55,11 @@ namespace Parser
                     else
                         ParseTextPart();
                 }
-                if (_print != 0)
-                    _result.Literals.Add(new Literal { Print = _print });
+                if (_literalLength != 0)
+                    AddLiteral();
 
-                Assert(_result.Holes.Count == _result.Literals.Count(x => x.Skip > 0));
-                return _result;
+                Assert(_holes.Count == _literals.Count(x => x.Skip > 0));
+                return new Template(_template, _isPositional, _literals, _holes);
             }
             catch (IndexOutOfRangeException)
             {
@@ -57,7 +69,7 @@ namespace Parser
 
         private void ParseTextPart()
         {
-            _print = (ushort)SkipUntil(TextDelimiters, required: false);
+            _literalLength = (ushort)SkipUntil(TextDelimiters, required: false);
         }
 
         private void ParseOpenBracketPart()
@@ -68,8 +80,8 @@ namespace Parser
             {
                 case '{':
                     Skip('{');
-                    _result.Literals.Add(new Literal { Print = ++_print });
-                    _print = 0;
+                    _literalLength++;
+                    AddLiteral();                    
                     return;
                 case '@':
                     Skip('@');
@@ -89,9 +101,9 @@ namespace Parser
         {
             Skip('}');
             if (Read() != '}')
-                throw new TemplateParserException($"Unexpected '}}' ", _position-2);
-            _result.Literals.Add(new Literal { Print = ++_print });
-            _print = 0;
+                throw new TemplateParserException($"Unexpected '}}' ", _position - 2);
+            _literalLength++;
+            AddLiteral();
         }
 
         private void ParseHole(CaptureType type)
@@ -102,9 +114,8 @@ namespace Parser
             int alignment = Peek() == ',' ? ParseAlignment() : 0;
             string format = Peek() == ':' ? ParseFormat() : null;
             Skip('}');
-            _result.Literals.Add(new Literal { Print = _print, Skip = (ushort)(_position - start + (type == CaptureType.Normal ? 1 : 2)) });
-            _print = 0;
-            _result.Holes.Add(new Hole 
+            AddLiteral(_position - start + (type == CaptureType.Normal ? 1 : 2));   // Account for skipped '{', '{$' or '{@'
+            _holes.Add(new Hole 
             { 
                 Name = name,
                 Format = format,
@@ -131,7 +142,7 @@ namespace Parser
             }
 
             if (parameterIndex == -1)
-                _result.IsPositional = false;
+                _isPositional = false;
 
             return ReadUntil(HoleDelimiters);            
         }

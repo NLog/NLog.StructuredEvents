@@ -21,19 +21,22 @@ namespace Parser
     // which is interpreted as "move one char forward, no hole".
     // |Escaped }|}| is fun.|
     // |9        |0|8       |0
-    public List<Literal> Literals { get; } = new List<Literal>();
+    public List<Literal> Literals { get; }
 
     // This is the list of holes. It's used both to fill the string rendering
     // and to send values along the template to structured targets.
-    public List<Hole> Holes { get; } = new List<Hole>();
+    public List<Hole> Holes { get; }
 
     // Indicates whether the template should be interpreted as positional 
     // (all holes are numbers) or named.
-    public bool IsPositional { get; set; } = true;
+    public bool IsPositional { get; }
 
-    public Template(string template)
+    public Template(string template, bool isPositional, List<Literal> literals, List<Hole> holes)
     {
       Value = template;
+      IsPositional = isPositional;
+      Literals = literals;
+      Holes = holes;
     }
 
     // This is for testing only: recreates .Value from the parsed data
