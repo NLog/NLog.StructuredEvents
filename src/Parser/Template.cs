@@ -57,11 +57,11 @@ namespace Parser
           pos += literal.Skip;
           var hole = Holes[h++];
 
-          if (hole.CaptureType == HoleType.Normal)
+          if (hole.CaptureType == CaptureType.Normal)
             sb.Append('{');
-          else if (hole.CaptureType == HoleType.Destructuring)
+          else if (hole.CaptureType == CaptureType.Destructuring)
             sb.Append("{@");
-          else  // hole.CaptureType == HoleType.Stringification
+          else  // hole.CaptureType == CaptureType.Stringification
             sb.Append("{$");
 
           sb.Append(hole.Name);
@@ -77,26 +77,5 @@ namespace Parser
       }
       return sb.ToString();
     }
-  }
-
-  public struct Literal
-  {
-    // Number of characters to print
-    public ushort Print;
-    // Number of characters to skip. 0 is a special value that mean: 1 escaped char, no hole.
-    public ushort Skip; 
-  }
-
-  public struct Hole
-  {
-    // Sent to structured loggers
-    public string Name;
-    // Used to render strings
-    public string Format;    
-    public HoleType CaptureType; 
-    // Used to get the correct parameter when rendering positional templates.
-    public byte Index;
-    // Used to render strings. 0 means no alignment.
-    public short Alignment;
   }
 }

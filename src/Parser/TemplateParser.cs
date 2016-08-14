@@ -15,7 +15,6 @@ namespace Parser
         }
 
         private static readonly char[] HoleDelimiters = { ',', ':', '}' };
-        private static readonly char[] AlignmentDelimiters = { ':', '}' };
         private static readonly char[] TextDelimiters = { '{', '}' };
         private readonly Template _result;
         private readonly string _template;
@@ -58,7 +57,7 @@ namespace Parser
 
         private void ParseTextPart()
         {
-            _print = (ushort)CountUntil(TextDelimiters, required: false);
+            _print = (ushort)SkipUntil(TextDelimiters, required: false);
         }
 
         private void ParseOpenBracketPart()
@@ -74,14 +73,14 @@ namespace Parser
                     return;
                 case '@':
                     Skip('@');
-                    ParseHole(HoleType.Destructuring);
+                    ParseHole(CaptureType.Destructuring);
                     return;
                 case '$':
                     Skip('$');
-                    ParseHole(HoleType.Stringification);
+                    ParseHole(CaptureType.Stringification);
                     return;
                 default:
-                    ParseHole(HoleType.Normal);
+                    ParseHole(CaptureType.Normal);
                     return;
             }
         }
@@ -95,7 +94,7 @@ namespace Parser
             _print = 0;
         }
 
-        private void ParseHole(HoleType type)
+        private void ParseHole(CaptureType type)
         {
             int start = _position;
             int position;
@@ -103,7 +102,7 @@ namespace Parser
             int alignment = Peek() == ',' ? ParseAlignment() : 0;
             string format = Peek() == ':' ? ParseFormat() : null;
             Skip('}');
-            _result.Literals.Add(new Literal { Print = _print, Skip = (ushort)(_position - start + (type == HoleType.Normal ? 1 : 2)) });
+            _result.Literals.Add(new Literal { Print = _print, Skip = (ushort)(_position - start + (type == CaptureType.Normal ? 1 : 2)) });
             _print = 0;
             _result.Holes.Add(new Hole 
             { 
@@ -171,6 +170,19 @@ namespace Parser
             while (_template[_position] == ' ') _position++;
         }
 
+        private int SkipUntil(char[] search, bool required = true)
+        {
+            int start = _position;
+            int i = _template.IndexOfAny(search, _position);
+            if (i == -1 && required)
+            {
+                var formattedChars = string.Join(", ", search.Select(c => "'" + c + "'").ToArray()); 
+                throw new TemplateParserException($"Reached end of template while expecting one of {formattedChars}.", _position);
+            }
+            _position = i == -1 ? _length : i;
+            return _position - start;
+        }
+
         private int ReadInt()
         {               
             SkipSpaces();                                
@@ -214,20 +226,7 @@ namespace Parser
         private string ReadUntil(char[] search, bool required = true)
         {
             int start = _position;
-            return _template.Substring(start, CountUntil(search, required));
-        }
-
-        private int CountUntil(char[] search, bool required = true)
-        {
-            int start = _position;
-            int i = _template.IndexOfAny(search, _position);
-            if (i == -1 && required)
-            {
-                var formattedChars = string.Join(", ", search.Select(c => "'" + c + "'").ToArray()); 
-                throw new TemplateParserException($"Reached end of template while expecting one of {formattedChars}.", _position);
-            }
-            _position = i == -1 ? _length : i;
-            return _position - start;
+            return _template.Substring(start, SkipUntil(search, required));
         }
     }
 }

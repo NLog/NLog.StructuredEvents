@@ -100,16 +100,16 @@ namespace Parser.Tests
         }
 
         [Theory]
-        [InlineData("{aaa}", HoleType.Normal)]
-        [InlineData("{@a}", HoleType.Destructuring)]
-        [InlineData("{@A}", HoleType.Destructuring)]
-        [InlineData("{@8}", HoleType.Destructuring)]
-        [InlineData("{@aaa}", HoleType.Destructuring)]
-        [InlineData("{$a}", HoleType.Stringification)]
-        [InlineData("{$A}", HoleType.Stringification)]
-        [InlineData("{$9}", HoleType.Stringification)]
-        [InlineData("{$aaa}", HoleType.Stringification)]
-        public void ParseHoleType(string input, HoleType holeType)
+        [InlineData("{aaa}", CaptureType.Normal)]
+        [InlineData("{@a}", CaptureType.Destructuring)]
+        [InlineData("{@A}", CaptureType.Destructuring)]
+        [InlineData("{@8}", CaptureType.Destructuring)]
+        [InlineData("{@aaa}", CaptureType.Destructuring)]
+        [InlineData("{$a}", CaptureType.Stringification)]
+        [InlineData("{$A}", CaptureType.Stringification)]
+        [InlineData("{$9}", CaptureType.Stringification)]
+        [InlineData("{$aaa}", CaptureType.Stringification)]
+        public void ParseHoleType(string input, CaptureType holeType)
         {
             var template = TemplateParser.Parse(input);
 
