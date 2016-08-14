@@ -113,7 +113,7 @@ namespace Parser.Tests
         {
             var template = TemplateParser.Parse(input);
 
-            Assert.Equal(1, template.Holes.Count);
+            Assert.Equal(1, template.Holes.Length);
             Assert.Equal(holeType, template.Holes[0].CaptureType);
         }
 

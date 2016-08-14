@@ -21,11 +21,11 @@ namespace Parser
     // which is interpreted as "move one char forward, no hole".
     // |Escaped }|}| is fun.|
     // |9        |0|8       |0
-    public List<Literal> Literals { get; }
+    public Literal[] Literals { get; }
 
     // This is the list of holes. It's used both to fill the string rendering
     // and to send values along the template to structured targets.
-    public List<Hole> Holes { get; }
+    public Hole[] Holes { get; }
 
     // Indicates whether the template should be interpreted as positional 
     // (all holes are numbers) or named.
@@ -35,8 +35,10 @@ namespace Parser
     {
       Value = template;
       IsPositional = isPositional;
-      Literals = literals;
-      Holes = holes;
+      // Using arrays is important! It's the only CLR type that will give us a no-copy access to 
+      // the structs contained in the array.
+      Literals = literals.ToArray();
+      Holes = holes.ToArray();
     }
 
     // This is for testing only: recreates .Value from the parsed data
@@ -58,27 +60,30 @@ namespace Parser
         else
         {
           pos += literal.Skip;
-          var hole = Holes[h++];
-
-          if (hole.CaptureType == CaptureType.Normal)
-            sb.Append('{');
-          else if (hole.CaptureType == CaptureType.Destructuring)
-            sb.Append("{@");
-          else  // hole.CaptureType == CaptureType.Stringification
-            sb.Append("{$");
-
-          sb.Append(hole.Name);
-
-          if (hole.Alignment != 0)
-            sb.Append(',').Append(hole.Alignment);
-          
-          if (hole.Format != null)
-            sb.Append(':').Append(hole.Format);
-          
-          sb.Append('}');
+          RebuildHole(sb, ref Holes[h++]);
         }
       }
       return sb.ToString();
+    }
+
+    private static void RebuildHole(StringBuilder sb, ref Hole hole)
+    {
+        if (hole.CaptureType == CaptureType.Normal)
+            sb.Append('{');
+        else if (hole.CaptureType == CaptureType.Destructuring)
+            sb.Append("{@");
+        else  // hole.CaptureType == CaptureType.Stringification
+            sb.Append("{$");
+
+        sb.Append(hole.Name);
+
+        if (hole.Alignment != 0)
+            sb.Append(',').Append(hole.Alignment);
+          
+        if (hole.Format != null)
+            sb.Append(':').Append(hole.Format);
+          
+        sb.Append('}');
     }
   }
 }
