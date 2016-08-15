@@ -111,7 +111,7 @@ namespace Parser
                 AppendValue(sb, ref hole, item, false);
                 sb.Append(", ");
             }
-            if (sb.Length > pos) sb.Length = sb.Length - 2; // Remove trailing ", "
+            if (sb.Length > pos) sb.Length -= 2; // Remove trailing ", "
             return;
         }
 
@@ -123,7 +123,9 @@ namespace Parser
         // TODO: value can be null again (from IEnumerable)
         IFormattable formattable;
         if (hole.Format != null && (formattable = value as IFormattable) != null)
+        {
             sb.Append(formattable.ToString(hole.Format, CultureInfo.CurrentCulture));
+        }
         else if (value is string)
         {
             if (legacy || hole.Format == "l")
