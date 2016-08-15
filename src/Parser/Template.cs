@@ -1,4 +1,7 @@
+using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Text;
 
 namespace Parser
@@ -52,6 +55,93 @@ namespace Parser
       // the structs contained in the array.
       Literals = literals.ToArray();
       Holes = holes.ToArray();
+    }
+
+    public string Render(object[] parameters)
+    {
+        var sb = new StringBuilder();
+        int pos = 0;
+        int h = 0;
+        foreach (var literal in Literals)
+        {
+            sb.Append(Value, pos, literal.Print);
+            pos += literal.Print;
+            if (literal.Skip == 0) 
+                pos++;
+            else
+            {
+                pos += literal.Skip;
+                if (IsPositional)
+                    RenderHolePositional(sb, ref Holes[h++], parameters);
+                else
+                    RenderHole(sb, ref Holes[h], parameters[h++]);
+            }
+        }
+        return sb.ToString();
+    }
+
+    private static void RenderHolePositional(StringBuilder sb, ref Hole hole, object[] parameters)
+        => RenderHole(sb, ref hole, parameters[hole.Index], true);
+
+    private static void RenderHole(StringBuilder sb, ref Hole hole, object value, bool legacy = false)
+    {
+        // TODO: handle value == null
+        
+        // TODO: destructuring {@x}
+        
+        if (hole.CaptureType == CaptureType.Stringification)
+        {
+            // TODO: we don't need to support format and alignment here?
+            sb.Append('"').Append(value.ToString()).Append('"');
+            return;
+        }
+
+        // Shortcut common case. It is important to do this before IEnumerable, as string _is_ IEnumerable
+        if (value is string)
+        {
+            AppendValue(sb, ref hole, value, legacy);
+            return;
+        }
+
+        IEnumerable collection;
+        if (!legacy && (collection = value as IEnumerable) != null)
+        {
+            int pos = sb.Length;
+            foreach (var item in collection) {
+                AppendValue(sb, ref hole, item, false);
+                sb.Append(", ");
+            }
+            if (sb.Length > pos) sb.Length = sb.Length - 2; // Remove trailing ", "
+            return;
+        }
+
+        AppendValue(sb, ref hole, value, legacy);
+    }
+
+    private static void AppendValue(StringBuilder sb, ref Hole hole, object value, bool legacy)
+    {
+        // TODO: value can be null again (from IEnumerable)
+        IFormattable formattable;
+        if (hole.Format != null && (formattable = value as IFormattable) != null)
+            sb.Append(formattable.ToString(hole.Format, CultureInfo.CurrentCulture));
+        else if (value is string)
+        {
+            if (legacy || hole.Format == "l")
+                sb.Append((string)value);
+            else
+                sb.Append('"').Append((string)value).Append('"');
+        }
+        else if (value is char)
+        {
+            if (legacy || hole.Format == "l")
+                sb.Append((char)value);
+            else
+                sb.Append('"').Append((char)value).Append('"');
+        }
+        else
+        {
+            sb.Append(value.ToString());
+        }
     }
 
     /// <summary>This is for testing only: recreates <see cref=Value /> from the parsed data.</summary>
