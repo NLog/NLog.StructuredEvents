@@ -38,34 +38,47 @@ namespace Parser.Tests
         [InlineData("{aaa:000}")]
         [InlineData(" {@destructre} ")]
         [InlineData(" {$stringify} ")]
+        [InlineData(" {alignment,-10} ")]
+        [InlineData(" {alignment,10} ")]
+        [InlineData(" {0,10} ")]
+        [InlineData(" {0,-10} ")]
+        [InlineData(" {0,-10:test} ")]
         public void ParseAndPrint(string input)
         {
-            var parts = TemplateParser.Parse(input);
+            var template = TemplateParser.Parse(input);
 
-            //toString will reconstuct everthing
-            var printed = parts.Print();
-            Assert.Equal(input, printed);
+            Assert.Equal(input, template.Rebuild());
         }
 
         [Theory]
-        [InlineData("{0}", true, 0)]
-        [InlineData("{9}", true, 9)]
-        [InlineData("{1 }", true, 1)]
-        [InlineData("{1} {2}", true, 1)]
-        [InlineData("{@3} {$4}", true, 3)]
-        [InlineData("{3,6}", true, 3)]
-        [InlineData("{5:R}", true, 5)]
-        [InlineData("{ 0}", false, -1)]
-        [InlineData("{-1}", false, -1)]
-        [InlineData("{1.2}", false, -1)]
-        [InlineData("{42r}", false, -1)]
-        [InlineData("{6} {x}", false, 6)]   // First is numeric, although not positional overall
-        public void ParsePositional(string input, bool positional, int index)
+        [InlineData("{0}", 0)]
+        [InlineData("{001}", 1)]
+        [InlineData("{9}", 9)]
+        [InlineData("{1 }", 1)]
+        [InlineData("{1} {2}", 1)]
+        [InlineData("{@3} {$4}", 3)]
+        [InlineData("{3,6}", 3)]
+        [InlineData("{5:R}", 5)]        
+        public void ParsePositional(string input, int index)
         {
-            var parts = TemplateParser.Parse(input);
+            var template = TemplateParser.Parse(input);
 
-            Assert.Equal(positional, parts.IsPositional);
-            Assert.Equal(index, parts.Cast<HolePart>().First().HoleIndex);
+            Assert.True(template.IsPositional);
+            Assert.Equal(index, template.Holes[0].Index);
+        }
+
+        [Theory]
+        [InlineData("{ 0}")]
+        [InlineData("{-1}")]
+        [InlineData("{1.2}")]
+        [InlineData("{42r}")]
+        [InlineData("{6} {x}")]
+        [InlineData("{a} {x}")]
+        public void ParseNominal(string input)
+        {
+            var template = TemplateParser.Parse(input);
+
+            Assert.False(template.IsPositional);
         }
 
         [Theory]
@@ -81,29 +94,27 @@ namespace Parser.Tests
         [InlineData("{18 }", "18 ")]
         public void ParseName(string input, string name)
         {
-            var parts = TemplateParser.Parse(input);
+            var template = TemplateParser.Parse(input);
 
-            Assert.Equal(name, parts.Cast<HolePart>().First().Name);
+            Assert.Equal(name, template.Holes[0].Name);
         }
 
         [Theory]
-        [InlineData("{aaa}", HoleType.Normal)]
-        [InlineData("{@a}", HoleType.Destructuring)]
-        [InlineData("{@A}", HoleType.Destructuring)]
-        [InlineData("{@8}", HoleType.Destructuring)]
-        [InlineData("{@aaa}", HoleType.Destructuring)]
-        [InlineData("{$a}", HoleType.Stringification)]
-        [InlineData("{$A}", HoleType.Stringification)]
-        [InlineData("{$9}", HoleType.Stringification)]
-        [InlineData("{$aaa}", HoleType.Stringification)]
-        public void ParseHoleType(string input, HoleType holeType)
+        [InlineData("{aaa}", CaptureType.Normal)]
+        [InlineData("{@a}", CaptureType.Destructuring)]
+        [InlineData("{@A}", CaptureType.Destructuring)]
+        [InlineData("{@8}", CaptureType.Destructuring)]
+        [InlineData("{@aaa}", CaptureType.Destructuring)]
+        [InlineData("{$a}", CaptureType.Stringification)]
+        [InlineData("{$A}", CaptureType.Stringification)]
+        [InlineData("{$9}", CaptureType.Stringification)]
+        [InlineData("{$aaa}", CaptureType.Stringification)]
+        public void ParseHoleType(string input, CaptureType holeType)
         {
-            var parts = TemplateParser.Parse(input);
+            var template = TemplateParser.Parse(input);
 
-            Assert.Equal(1, parts.Count);
-
-            var holePart = parts.OfType<HolePart>().Single();
-            Assert.Equal(holeType, holePart.HoleType);
+            Assert.Equal(1, template.Holes.Length);
+            Assert.Equal(holeType, template.Holes[0].CaptureType);
         }
 
         [Theory]
@@ -111,34 +122,32 @@ namespace Parser.Tests
         [InlineData(" {0,-10} ", -10, null)]
         [InlineData("{0,  36  }", 36, null)]
         [InlineData("{0,-36  :x}", -36, "x")]
-        [InlineData(" {0:nl-nl} ", null, "nl-nl")]
-        [InlineData(" {0} ", null, null)]
-        public void ParseFormatAndAlignment_numeric(string input, int? aligment, string format)
+        [InlineData(" {0:nl-nl} ", 0, "nl-nl")]
+        [InlineData(" {0} ", 0, null)]
+        public void ParseFormatAndAlignment_numeric(string input, int aligment, string format)
         {
-            var parts = TemplateParser.Parse(input);
-            var hole = parts.OfType<HolePart>().Single();
-            //toString will reconstuct everthing
+            var templates = TemplateParser.Parse(input);
+            var hole = templates.Holes[0];
 
             Assert.Equal("0", hole.Name);
-            Assert.Equal(0, hole.HoleIndex);
-            Assert.Equal(aligment, hole.Aligment);
+            Assert.Equal(0, hole.Index);
+            Assert.Equal(aligment, hole.Alignment);
             Assert.Equal(format, hole.Format);
         }
 
         [Theory]
         [InlineData(" {car,-10:nl-nl} ", -10, "nl-nl")]
         [InlineData(" {car,-10} ", -10, null)]
-        [InlineData(" {car:nl-nl} ", null, "nl-nl")]
-        [InlineData(" {car} ", null, null)]
-        public void ParseFormatAndAlignment_text(string input, int? aligment, string format)
+        [InlineData(" {car:nl-nl} ", 0, "nl-nl")]
+        [InlineData(" {car} ", 0, null)]
+        public void ParseFormatAndAlignment_text(string input, int aligment, string format)
         {
-            var parts = TemplateParser.Parse(input);
-            var hole = parts.OfType<HolePart>().Single();
-            //toString will reconstuct everthing
+            var template = TemplateParser.Parse(input);
+            var hole = template.Holes[0];
 
+            Assert.False(template.IsPositional);
             Assert.Equal("car", hole.Name);
-            Assert.Equal(-1, hole.HoleIndex);
-            Assert.Equal(aligment, hole.Aligment);
+            Assert.Equal(aligment, hole.Alignment);
             Assert.Equal(format, hole.Format);
         }
 

@@ -1,6 +1,6 @@
 namespace Parser
 {
-    public enum HoleType
+    public enum CaptureType : byte
     {
         /// <summary>
         /// normal {x}
