@@ -122,16 +122,17 @@ namespace Parser
     {
         // TODO: value can be null again (from IEnumerable)
         IFormattable formattable;
+        string stringValue;
         if (hole.Format != null && (formattable = value as IFormattable) != null)
         {
             sb.Append(formattable.ToString(hole.Format, CultureInfo.CurrentCulture));
         }
-        else if (value is string)
+        else if ((stringValue = value as string) != null)
         {
             if (legacy || hole.Format == "l")
-                sb.Append((string)value);
+                sb.Append(stringValue);
             else
-                sb.Append('"').Append((string)value).Append('"');
+                sb.Append('"').Append(stringValue).Append('"');
         }
         else if (value is char)
         {
