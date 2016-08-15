@@ -108,8 +108,8 @@ namespace Parser
         {
             bool separator = false;
             foreach (var item in collection) {
-                AppendValue(sb, ref hole, item, false);
                 if (separator) sb.Append(", ");
+                AppendValue(sb, ref hole, item, false);
                 separator = true;
             }
             return;
