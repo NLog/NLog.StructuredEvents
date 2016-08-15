@@ -59,7 +59,7 @@ namespace Parser
 
     public string Render(object[] parameters)
     {
-        var sb = new StringBuilder();
+        var sb = new StringBuilder(Value.Length + 64 * Holes.Length);
         int pos = 0;
         int h = 0;
         foreach (var literal in Literals)
