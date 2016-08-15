@@ -5,30 +5,43 @@ namespace Parser
 {
   public class Template
   {
-    // The original template string.
-    // This is the key passed to structured targets.     
+    /// <summary>The original template string.</summary>
+    /// <remarks>This is the key passed to structured targets.</remarks>     
     public string Value { get; }
 
-    // This is the list of literal parts, useful for string rendering.
-    // It indicates the number of characters from the original string to print,
-    // then there's a hole with how many chars to skip.
-    // Examples:
-    // |Hello |{firstName}| |{lastName}|!|
-    // |6     |11         |1|10        |1|0
-    //   |{x}| * 2 = |{2x}
-    // |0|3  |7      |4
-    // The problem is escaped braces. They are represented by a skip = 0,
-    // which is interpreted as "move one char forward, no hole".
-    // |Escaped }|}| is fun.|
-    // |9        |0|8       |0
+    /// <summary>The list of literal parts, useful for string rendering.
+    /// It indicates the number of characters from the original string to print,
+    /// then there's a hole with how many chars to skip.</summary>
+    /// <example>
+    /// "Hello {firstName} {lastName}!"
+    /// -------------------------------------
+    /// ║P     |S          ║P|S         ║P|S║
+    /// ║6     |11         ║1|10        ║1|0║
+    /// ║Hello |{firstName}║ |{lastName}║!║
+    /// 
+    /// "{x} * 2 = {2x}"
+    /// --------------------
+    /// ║P|S  ║P      |S   ║
+    /// ║0|3  ║7      |4   ║
+    ///   ║{x}║ * 2 = |{2x}║
+    /// 
+    /// The tricky part is escaped braces. They are represented by a skip = 0,
+    /// which is interpreted as "move one char forward, no hole".
+    /// 
+    /// "Escaped }} is fun."
+    /// ----------------------
+    /// ║P        |S║P       |S║
+    /// ║9        |0║8       |0║
+    /// ║Escaped }|}║ is fun.|║
+    /// </example>
     public Literal[] Literals { get; }
 
-    // This is the list of holes. It's used both to fill the string rendering
-    // and to send values along the template to structured targets.
+    /// <summary> This list of holes. It's used both to fill the string rendering
+    /// and to send values along the template to structured targets.</summary>
     public Hole[] Holes { get; }
 
-    // Indicates whether the template should be interpreted as positional 
-    // (all holes are numbers) or named.
+    /// <summary>Indicates whether the template should be interpreted as positional 
+    /// (all holes are numbers) or named.</summary>
     public bool IsPositional { get; }
 
     public Template(string template, bool isPositional, List<Literal> literals, List<Hole> holes)
@@ -41,7 +54,7 @@ namespace Parser
       Holes = holes.ToArray();
     }
 
-    // This is for testing only: recreates .Value from the parsed data
+    /// <summary>This is for testing only: recreates <see cref=Value /> from the parsed data.</summary>
     public string Rebuild()
     {
       var sb = new StringBuilder(Value.Length);

@@ -31,10 +31,10 @@ namespace Parser
             _length = template.Length;
         }
 
-        // Literals are added to the result list when:
-        // - a hole is encountered
-        // - an escape is encountered. The escape itself is always included in the preceding literal.
-        // - at the end of the template.
+        /// <summary>Literals are added to the result list when:
+        /// - a hole is encountered
+        /// - an escape is encountered. The escape itself is always included in the preceding literal.
+        /// - at the end of the template.</summary>
         private void AddLiteral(int skip = 0)
         {
             _literals.Add(new Literal { Print = (ushort)_literalLength, Skip = (ushort)skip });
