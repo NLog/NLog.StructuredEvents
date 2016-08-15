@@ -106,12 +106,12 @@ namespace Parser
         IEnumerable collection;
         if (!legacy && (collection = value as IEnumerable) != null)
         {
-            int pos = sb.Length;
+            bool separator = false;
             foreach (var item in collection) {
                 AppendValue(sb, ref hole, item, false);
-                sb.Append(", ");
+                if (separator) sb.Append(", ");
+                separator = true;
             }
-            if (sb.Length > pos) sb.Length -= 2; // Remove trailing ", "
             return;
         }
 
