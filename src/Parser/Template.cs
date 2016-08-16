@@ -186,8 +186,8 @@ namespace Parser
         if (hole.Alignment != 0)
             sb.Append(',').Append(hole.Alignment);
           
-        if (hole.Format != null)
-            sb.Append(':').Append(hole.Format.Replace("{","{{").Replace("}","}}"));
+        if (hole.Format != null) 
+            sb.Append(':').Append(hole.Format.Replace("{","{{").Replace("}","}}")); // rebuild of the escaped brackets in format
           
         sb.Append('}');
     }

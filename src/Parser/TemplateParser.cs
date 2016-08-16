@@ -160,6 +160,10 @@ namespace Parser
             return ReadUntil(HoleDelimiters);
         }
 
+        /// <summary>
+        /// Parse format after hole name/index
+        /// </summary>
+        /// <returns></returns>
         private string ParseFormat()
         {
             Skip(':');
@@ -167,9 +171,12 @@ namespace Parser
             return format;
         }
 
+        /// <summary>
+        /// Parse inner of format, handle the escaped { and } in the format.
+        /// </summary>
+        /// <returns></returns>
         private string ParseFormatInner()
         {
-            // TODO: Escaped }} in formats?
             var format = ReadUntil(TextDelimiters);
             var c = Read();
             if (_position == _length)
@@ -214,8 +221,7 @@ namespace Parser
                         break;
                     }
             }
-
-
+            
             return format;
         }
 
