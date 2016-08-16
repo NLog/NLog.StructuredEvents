@@ -9,7 +9,7 @@ namespace Parser
     {
         public static Template Parse(string template)
         {
-            if (template == null) 
+            if (template == null)
                 throw new ArgumentNullException(nameof(template));
             var parser = new TemplateParser(template);
             return parser.Parse();
@@ -81,7 +81,7 @@ namespace Parser
                 case '{':
                     Skip('{');
                     _literalLength++;
-                    AddLiteral();                    
+                    AddLiteral();
                     return;
                 case '@':
                     Skip('@');
@@ -110,13 +110,26 @@ namespace Parser
         {
             int start = _position;
             int position;
-            string name = ParseName(out position); 
+            string name = ParseName(out position);
             int alignment = Peek() == ',' ? ParseAlignment() : 0;
-            string format = Peek() == ':' ? ParseFormat() : null;
-            Skip('}');
+            string format;
+            if (Peek() == ':')
+            {
+                format = ParseFormat();
+            }
+            else
+            {
+                format = null;
+                //parseFormat does the skip
+                Skip('}');
+            }
+
+
+
+
             AddLiteral(_position - start + (type == CaptureType.Normal ? 1 : 2));   // Account for skipped '{', '{$' or '{@'
-            _holes.Add(new Hole 
-            { 
+            _holes.Add(new Hole
+            {
                 Name = name,
                 Format = format,
                 CaptureType = type,
@@ -126,8 +139,8 @@ namespace Parser
         }
 
         private string ParseName(out int parameterIndex)
-        {    
-            parameterIndex = -1;        
+        {
+            parameterIndex = -1;
             char c = Peek();
             // If the name matches /^\d+ *$/ we consider it positional
             if (c >= '0' && c <= '9')
@@ -138,20 +151,38 @@ namespace Parser
                 c = Peek();
                 if (c == '}' || c == ':' || c == ',')
                     parameterIndex = parsed;
-                _position = start;        
+                _position = start;
             }
 
             if (parameterIndex == -1)
                 _isPositional = false;
 
-            return ReadUntil(HoleDelimiters);            
+            return ReadUntil(HoleDelimiters);
         }
 
         private string ParseFormat()
         {
             Skip(':');
-            // TODO: Escaped }} in formats?
-            return ReadUntil('}');
+            var format = ParseFormatInner();
+            return format;
+        }
+
+        private string ParseFormatInner()
+        {
+// TODO: Escaped }} in formats?
+            var format = ReadUntil('}');
+            Skip('}');
+            if (_position != _length)
+            {
+                var c = Peek();
+                if (c == '}')
+                {
+                    //this is an escaped } and need to be added to the format.
+                    Read();
+                    format += '}' + ParseFormatInner();
+                }
+            }
+            return format;
         }
 
         private int ParseAlignment()
@@ -187,7 +218,7 @@ namespace Parser
             int i = _template.IndexOfAny(search, _position);
             if (i == -1 && required)
             {
-                var formattedChars = string.Join(", ", search.Select(c => "'" + c + "'").ToArray()); 
+                var formattedChars = string.Join(", ", search.Select(c => "'" + c + "'").ToArray());
                 throw new TemplateParserException($"Reached end of template while expecting one of {formattedChars}.", _position);
             }
             _position = i == -1 ? _length : i;
@@ -195,9 +226,9 @@ namespace Parser
         }
 
         private int ReadInt()
-        {               
-            SkipSpaces();                                
-                        
+        {
+            SkipSpaces();
+
             bool negative = false;
             if (Peek() == '-')
             {
@@ -207,7 +238,7 @@ namespace Parser
 
             int i = 0;
             bool hasDigits = false;
-            while (true) 
+            while (true)
             {
                 // Can be out of bounds, but never in correct use (inside a hole).
                 char c = Peek();
@@ -217,9 +248,9 @@ namespace Parser
                 _position++;
                 i = i * 10 + digit;
             }
-            if (!hasDigits) 
+            if (!hasDigits)
                 throw new TemplateParserException("An integer is expected", _position);
-            
+
             SkipSpaces();
             return negative ? -i : i;
         }
