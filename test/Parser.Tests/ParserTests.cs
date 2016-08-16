@@ -43,6 +43,8 @@ namespace Parser.Tests
         [InlineData(" {0,10} ")]
         [InlineData(" {0,-10} ")]
         [InlineData(" {0,-10:test} ")]
+        [InlineData("{{{0:d}}}")]
+        [InlineData("{{{0:0{{}")]
         public void ParseAndPrint(string input)
         {
             var template = TemplateParser.Parse(input);
