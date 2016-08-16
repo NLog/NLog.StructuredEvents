@@ -295,15 +295,15 @@ namespace Parser
             return negative ? -i : i;
         }
 
-        private string ReadUntil(char search, bool required = true)
-        {
-            int start = _position;
-            int i = _template.IndexOf(search, _position);
-            if (i == -1 && required)
-                throw new TemplateParserException($"Reached end of template while expecting '{search}'.", _position);
-            _position = i == -1 ? _length : i;
-            return _template.Substring(start, _position - start);
-        }
+        //private string ReadUntil(char search, bool required = true)
+        //{
+        //    int start = _position;
+        //    int i = _template.IndexOf(search, _position);
+        //    if (i == -1 && required)
+        //        throw new TemplateParserException($"Reached end of template while expecting '{search}'.", _position);
+        //    _position = i == -1 ? _length : i;
+        //    return _template.Substring(start, _position - start);
+        //}
 
         private string ReadUntil(char[] search, bool required = true)
         {
