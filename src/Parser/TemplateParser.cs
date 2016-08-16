@@ -169,19 +169,53 @@ namespace Parser
 
         private string ParseFormatInner()
         {
-// TODO: Escaped }} in formats?
-            var format = ReadUntil('}');
-            Skip('}');
-            if (_position != _length)
+            // TODO: Escaped }} in formats?
+            var format = ReadUntil(TextDelimiters);
+            var c = Read();
+            if (_position == _length)
             {
-                var c = Peek();
-                if (c == '}')
-                {
-                    //this is an escaped } and need to be added to the format.
-                    Read();
-                    format += '}' + ParseFormatInner();
-                }
+                //end of template so done
+                return format;
             }
+
+            switch (c)
+            {
+                case '}':
+                    {
+                        var next = Peek();
+                        if (next == '}')
+                        {
+                            //this is an escaped } and need to be added to the format.
+                            Read();
+                            format += '}' + ParseFormatInner();
+                        }
+                        else
+                        {
+                            //done
+                            return format;
+                        }
+                        break;
+                    }
+                case '{':
+                    {
+                        //we need a second {, otherwise this format is wrong.
+                        var next = Peek();
+                        if (next == '{')
+                        {
+                            //this is an escaped } and need to be added to the format.
+                            Read();
+                            format += '{' + ParseFormatInner();
+                        }
+                        else
+                        {
+                            throw new TemplateParserException($"Expected '{{' but found '{next}' instead in format.", _position);
+                        }
+
+                        break;
+                    }
+            }
+
+
             return format;
         }
 
