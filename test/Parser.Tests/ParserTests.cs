@@ -174,7 +174,9 @@ namespace Parser.Tests
         [InlineData("{a,:N0}")]
         [InlineData("{a,}")]        
         [InlineData("{a,{}")]        
+        [InlineData("{a:{}")]        
         [InlineData("{a,d{e}")]        
+        [InlineData("{a:d{e}")]        
         public void ThrowsTemplateParserException(string input)
         {
             Assert.Throws<TemplateParserException>(() => TemplateParser.Parse(input));
