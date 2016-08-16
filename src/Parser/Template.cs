@@ -187,7 +187,7 @@ namespace Parser
             sb.Append(',').Append(hole.Alignment);
           
         if (hole.Format != null)
-            sb.Append(':').Append(hole.Format);
+            sb.Append(':').Append(hole.Format.Replace("{","{{").Replace("}","}}"));
           
         sb.Append('}');
     }
