@@ -149,74 +149,79 @@ namespace Parser
         }
 
         /// <summary>
-        /// Parse format after hole name/index. Don't read the last }
+        /// Parse format after hole name/index. Handle the escaped { and } in the format. Don't read the last }
         /// </summary>
         /// <returns></returns>
         private string ParseFormat()
         {
-            
+
             Skip(':');
-            var format = ParseFormatInner();
-            //unread the }
-            _position--;
-            return format;
-        }
-
-        /// <summary>
-        /// Parse inner of format, handle the escaped { and } in the format.
-        /// </summary>
-        /// <returns></returns>
-        private string ParseFormatInner()
-        {
-            var format = ReadUntil(TextDelimiters);
-            var c = Read();
-       
-
-            switch (c)
+            string format = null;
+            while (true)
             {
-                case '}':
-                    {
-                        if (_position == _length)
-                        {
-                            //end of template so done
-                            return format;
-                        }
+                if (format == null)
+                {
+                    //avoid string composition.
+                    format = ReadUntil(TextDelimiters);
+                }
+                else
+                {
+                    format += ReadUntil(TextDelimiters);
+                }
 
-                        var next = Peek();
-                        if (next == '}')
-                        {
-                            //this is an escaped } and need to be added to the format.
-                            Skip('}');
-                            format += "}" + ParseFormatInner();
-                        }
-                        else
-                        {
-                            //done
-                            return format;
-                        }
-                        break;
-                    }
-                case '{':
-                    {
-                        //we need a second {, otherwise this format is wrong.
-                        var next = Peek();
-                        if (next == '{')
-                        {
-                            //this is an escaped } and need to be added to the format.
-                            Skip('{');
-                            format += "{" + ParseFormatInner();
-                        }
-                        else
-                        {
-                            throw new TemplateParserException($"Expected '{{' but found '{next}' instead in format.", _position);
-                        }
+                var c = Read();
 
-                        break;
-                    }
+                switch (c)
+                {
+                    case '}':
+                        {
+                            if (_position == _length)
+                            {
+                                //unread the }
+                                _position--;
+                                //end of template so done
+                                return format;
+                            }
+
+                            var next = Peek();
+                            if (next == '}')
+                            {
+                                //this is an escaped } and need to be added to the format.
+                                Skip('}');
+                                format += "}";
+                            }
+                            else
+                            {
+                                //unread the }
+                                _position--;
+                                //done
+                                return format;
+                            }
+                            break;
+                        }
+                    case '{':
+                        {
+                            //we need a second {, otherwise this format is wrong.
+                            var next = Peek();
+                            if (next == '{')
+                            {
+                                //this is an escaped } and need to be added to the format.
+                                Skip('{');
+                                format += "{";
+                            }
+                            else
+                            {
+                                throw new TemplateParserException($"Expected '{{' but found '{next}' instead in format.",
+                                    _position);
+                            }
+
+                            break;
+                        }
+                }
             }
-
-            return format;
         }
+
+ 
 
         private int ParseAlignment()
         {
