@@ -112,20 +112,8 @@ namespace Parser
             int position;
             string name = ParseName(out position);
             int alignment = Peek() == ',' ? ParseAlignment() : 0;
-            string format;
-            if (Peek() == ':')
-            {
-                format = ParseFormat();
-            }
-            else
-            {
-                format = null;
-                //parseFormat does the skip
-                Skip('}');
-            }
-
-
-
+            string format = Peek() == ':' ? ParseFormat() : null;
+            Skip('}');
 
             AddLiteral(_position - start + (type == CaptureType.Normal ? 1 : 2));   // Account for skipped '{', '{$' or '{@'
             _holes.Add(new Hole
@@ -161,13 +149,16 @@ namespace Parser
         }
 
         /// <summary>
-        /// Parse format after hole name/index
+        /// Parse format after hole name/index. Don't read the last }
         /// </summary>
         /// <returns></returns>
         private string ParseFormat()
         {
+            
             Skip(':');
             var format = ParseFormatInner();
+            //unread the }
+            _position--;
             return format;
         }
 
@@ -193,8 +184,8 @@ namespace Parser
                         if (next == '}')
                         {
                             //this is an escaped } and need to be added to the format.
-                            Read();
-                            format += '}' + ParseFormatInner();
+                            Skip('}');
+                            format += "}" + ParseFormatInner();
                         }
                         else
                         {
@@ -210,8 +201,8 @@ namespace Parser
                         if (next == '{')
                         {
                             //this is an escaped } and need to be added to the format.
-                            Read();
-                            format += '{' + ParseFormatInner();
+                            Skip('{');
+                            format += "{" + ParseFormatInner();
                         }
                         else
                         {
@@ -221,7 +212,7 @@ namespace Parser
                         break;
                     }
             }
-            
+
             return format;
         }
 
