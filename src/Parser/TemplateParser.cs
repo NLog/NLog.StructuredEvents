@@ -170,16 +170,18 @@ namespace Parser
         {
             var format = ReadUntil(TextDelimiters);
             var c = Read();
-            if (_position == _length)
-            {
-                //end of template so done
-                return format;
-            }
+       
 
             switch (c)
             {
                 case '}':
                     {
+                        if (_position == _length)
+                        {
+                            //end of template so done
+                            return format;
+                        }
+
                         var next = Peek();
                         if (next == '}')
                         {
