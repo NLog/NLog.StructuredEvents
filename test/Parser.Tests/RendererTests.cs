@@ -34,6 +34,10 @@ namespace Parser.Tests
         [InlineData(" completed tasks {tasks:l} in {time:000} sec", new object[] { new [] { "parsing", "testing", "fixing"}, 10 }, " completed tasks parsing, testing, fixing in 010 sec")]
         [InlineData(" completed tasks {$tasks} in {time:000} sec", new object[] { new [] { "parsing", "testing", "fixing"}, 10 }, " completed tasks \"System.String[]\" in 010 sec")]
         [InlineData(" completed tasks {0} in {1:000} sec", new object[] { new [] { "parsing", "testing", "fixing"}, 10 }, " completed tasks System.String[] in 010 sec")]
+        [InlineData("{{{0:d}}}", new object[] { 3 }, "{d}")] //format is here "d}" ... because escape from left-to-right 
+        [InlineData("{{{0:d} }}", new object[] { 3 }, "{3 }")]
+        [InlineData("{{{0:dd}}}", new object[] { 3 }, "{dd}")]
+        [InlineData("{{{0:0{{}", new object[] { 3 }, "{3{")] //format is here "0{"
         public void RenderTest(string input, object[] args, string expected)
         {
             var template = TemplateParser.Parse(input);            
