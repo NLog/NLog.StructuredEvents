@@ -156,35 +156,16 @@ namespace Parser
         {
 
             Skip(':');
-            string format = null;
+            string format = ReadUntil(TextDelimiters); 
             while (true)
             {
-                if (format == null)
-                {
-                    //avoid string composition.
-                    format = ReadUntil(TextDelimiters);
-                }
-                else
-                {
-                    format += ReadUntil(TextDelimiters);
-                }
-
                 var c = Read();
 
                 switch (c)
                 {
                     case '}':
                         {
-                            if (_position == _length)
-                            {
-                                //unread the }
-                                _position--;
-                                //end of template so done
-                                return format;
-                            }
-
-                            var next = Peek();
-                            if (next == '}')
+                            if (_position < _length &&  Peek() == '}')
                             {
                                 //this is an escaped } and need to be added to the format.
                                 Skip('}');
@@ -192,7 +173,7 @@ namespace Parser
                             }
                             else
                             {
-                                //unread the }
+                                //done. unread the }
                                 _position--;
                                 //done
                                 return format;
@@ -218,6 +199,8 @@ namespace Parser
                             break;
                         }
                 }
+
+                format += ReadUntil(TextDelimiters);
             }
         }
 
@@ -292,16 +275,6 @@ namespace Parser
             SkipSpaces();
             return negative ? -i : i;
         }
-
-        //private string ReadUntil(char search, bool required = true)
-        //{
-        //    int start = _position;
-        //    int i = _template.IndexOf(search, _position);
-        //    if (i == -1 && required)
-        //        throw new TemplateParserException($"Reached end of template while expecting '{search}'.", _position);
-        //    _position = i == -1 ? _length : i;
-        //    return _template.Substring(start, _position - start);
-        //}
 
         private string ReadUntil(char[] search, bool required = true)
         {
