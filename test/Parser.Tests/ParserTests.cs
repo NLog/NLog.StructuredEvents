@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Parser.Parts;
 using Xunit;
 
 namespace Parser.Tests
@@ -53,19 +54,21 @@ namespace Parser.Tests
         }
 
         [Theory]
-        [InlineData("{0}", 0)]
-        [InlineData("{001}", 1)]
-        [InlineData("{9}", 9)]
-        [InlineData("{1 }", 1)]
-        [InlineData("{1} {2}", 1)]
-        [InlineData("{@3} {$4}", 3)]
-        [InlineData("{3,6}", 3)]
-        [InlineData("{5:R}", 5)]        
-        public void ParsePositional(string input, int index)
+        [InlineData("{0}", 0, null)]
+        [InlineData("{001}", 1, null)]
+        [InlineData("{9}", 9, null)]
+        [InlineData("{1 }", 1, null)]
+        [InlineData("{1} {2}", 1, null)]
+        [InlineData("{@3} {$4}", 3, null)]
+        [InlineData("{3,6}", 3, null)]
+        [InlineData("{5:R}", 5, "R")]        
+        [InlineData("{0:0}", 0, "0")]        
+        public void ParsePositional(string input, int index, string format)
         {
             var template = TemplateParser.Parse(input);
 
             Assert.True(template.IsPositional);
+            Assert.Equal(format, template.Holes[0].Format);
             Assert.Equal(index, template.Holes[0].Index);
         }
 
@@ -173,6 +176,10 @@ namespace Parser.Tests
         [InlineData("{a,-2.0")]
         [InlineData("{a,:N0}")]
         [InlineData("{a,}")]        
+        [InlineData("{a,{}")]        
+        [InlineData("{a:{}")]        
+        [InlineData("{a,d{e}")]        
+        [InlineData("{a:d{e}")]        
         public void ThrowsTemplateParserException(string input)
         {
             Assert.Throws<TemplateParserException>(() => TemplateParser.Parse(input));

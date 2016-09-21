@@ -1,4 +1,4 @@
-namespace Parser
+namespace Parser.Parts
 {
     public enum CaptureType : byte
     {
