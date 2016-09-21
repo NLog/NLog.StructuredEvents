@@ -1,11 +1,14 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Text;
+using Parser.Parts;
 
 namespace Parser
 {
+  [SuppressMessage("ReSharper", "RedundantToStringCall", Justification = "Performance")]
   public class Template
   {
     /// <summary>The original template string.</summary>
@@ -147,7 +150,7 @@ namespace Parser
         }
     }
 
-    /// <summary>This is for testing only: recreates <see cref=Value /> from the parsed data.</summary>
+    /// <summary>This is for testing only: recreates <see cref="Value"/> from the parsed data.</summary>
     public string Rebuild()
     {
       var sb = new StringBuilder(Value.Length);

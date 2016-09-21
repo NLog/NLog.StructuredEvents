@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Parser.Parts;
 using Xunit;
 
 namespace Parser.Tests

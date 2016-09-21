@@ -1,10 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using Parser.Parts;
 using static System.Diagnostics.Debug;
 
 namespace Parser
 {
+    [SuppressMessage("ReSharper", "FieldCanBeMadeReadOnly.Local", Justification = "Performance")]
     public class TemplateParser
     {
         public static Template Parse(string template)
@@ -101,7 +104,7 @@ namespace Parser
         {
             Skip('}');
             if (Read() != '}')
-                throw new TemplateParserException($"Unexpected '}}' ", _position - 2);
+                throw new TemplateParserException("Unexpected '}}' ", _position - 2);
             _literalLength++;
             AddLiteral();
         }
@@ -220,6 +223,7 @@ namespace Parser
 
         private char Read() => _template[_position++];
 
+        // ReSharper disable once UnusedParameter.Local
         private void Skip(char c)
         {
             // Can be out of bounds, but never in correct use (expects a required char).
