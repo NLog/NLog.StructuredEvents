@@ -17,7 +17,8 @@
     },
     "net451": {
       "dependencies": {
-        "Microsoft.NETCore.Platforms": "1.0.1"
+        "Microsoft.NETCore.Platforms": "1.0.1",
+        "Newtonsoft.Json": "9.0.1"
       }
     }
   }

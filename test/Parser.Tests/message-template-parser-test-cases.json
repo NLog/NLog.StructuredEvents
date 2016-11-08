@@ -1,0 +1,6 @@
+{
+  "Hello, world!":  [{"text": "Hello, world!"}],
+  "{Name}":         [{"property": "Name"}],
+  "{0}":            [{"property": "0", "positional": true}],
+  "Hello, {Name}!": [{"text": "Hello, "}, {"property": "Name"}, {"text": "!"}]
+}
