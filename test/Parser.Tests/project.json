@@ -1,25 +1,24 @@
 ﻿{
   "version": "1.0.0-*",
-  "testRunner": "xunit",
+
   "dependencies": {
-    "xunit": "2.2.0-beta2-build3300",
     "Parser": "1.0.0-*",
-    "dotnet-test-xunit": "2.2.0-preview2-build1029"
+    "NUnit": "3.5.0",
+    "dotnet-test-nunit": "3.4.0-beta-3",
+    "Newtonsoft.Json": "9.0.1"
   },
+
+  "testRunner": "nunit",
+
   "frameworks": {
     "netcoreapp1.0": {
+      "imports": "portable-net45+win8",
       "dependencies": {
         "Microsoft.NETCore.App": {
-          "type": "platform",
-          "version": "1.0.0"
+          "version": "1.0.0-*",
+          "type": "platform"
         }
-      }
-    },
-    "net451": {
-      "dependencies": {
-        "Microsoft.NETCore.Platforms": "1.0.1",
-        "Newtonsoft.Json": "9.0.1"
       }
     }
   }
-}
+} 
