@@ -14,6 +14,15 @@ namespace Parser
         public static void AppendValue(StringBuilder sb, object value, bool legacy, string format)
         {
 
+            // todo support all scalar types: 
+
+            // todo boolean
+            // todo numerics complete? (formatable)
+            // todo byte[] - hex?
+            // todo datetime, timespan, datetimeoffset
+            // todo nullables correct?
+            // todo idict
+
             string stringValue;
             // Shortcut common case. It is important to do this before IEnumerable, as string _is_ IEnumerable
             if ((stringValue = value as string) != null)
