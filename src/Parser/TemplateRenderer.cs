@@ -39,7 +39,11 @@ namespace Parser
 
         private static void RenderHole(StringBuilder sb, Hole hole, object value, bool legacy = false)
         {
-            // TODO: handle value == null
+            if (value == null)
+            {
+                sb.Append("NULL");
+                return;
+            }
 
             switch (hole.CaptureType)
             {
