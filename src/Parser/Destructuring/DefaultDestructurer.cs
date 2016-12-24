@@ -8,7 +8,7 @@ using System.Text;
 
 namespace Parser
 {
-    public class Destructurer
+    public class DefaultDestructurer : IDestructurer
     {
         /// <summary>
         /// Cache for property infos
