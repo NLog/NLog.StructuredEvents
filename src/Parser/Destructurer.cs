@@ -10,7 +10,7 @@ namespace Parser
 {
     public class Destructurer
     {
-        //private Dictionary<Type,>
+        private static Dictionary<Type, PropertyInfo[]> PropsCache = new Dictionary<Type, PropertyInfo[]>();
 
 
         internal string DestructureObject(object value)
@@ -22,7 +22,7 @@ namespace Parser
 
         public void DestructureObject(object value, StringBuilder sb)
         {
-            var props = value.GetType().GetProperties();
+            var props = GetProps(value);
 
             sb.Append('{');
 
@@ -43,6 +43,24 @@ namespace Parser
             }
             sb.Append('}');
 
+        }
+
+        /// <summary>
+        /// Get properties, cached for a type
+        /// </summary>
+        /// <param name="value"></param>
+        /// <returns></returns>
+        private static PropertyInfo[] GetProps(object value)
+        {
+            var type = value.GetType();
+            PropertyInfo[] props;
+            if (!PropsCache.TryGetValue(type, out props))
+            {
+                props = type.GetProperties();
+                PropsCache[type] = props;
+            }
+           
+            return props;
         }
 
         public static void AppendValue(StringBuilder sb, object value, bool legacy, string format)
