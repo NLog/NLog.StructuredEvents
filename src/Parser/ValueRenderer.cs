@@ -9,6 +9,8 @@ namespace Parser
 {
     public static class ValueRenderer
     {
+        private const string LiteralFormatSymbol = "l";
+
         public static void AppendValue(StringBuilder sb, object value, bool legacy, string format)
         {
 
@@ -42,7 +44,7 @@ namespace Parser
 
             else if (value is char)
             {
-                if (legacy || format == "l")
+                if (legacy || format == LiteralFormatSymbol)
                     sb.Append((char)value);
                 else
                     sb.Append('"').Append((char)value).Append('"');
@@ -55,7 +57,7 @@ namespace Parser
 
         private static void AppendValueAsString(StringBuilder sb, string stringValue, bool legacy, string format)
         {
-            if (legacy || format == "l")
+            if (legacy || format == LiteralFormatSymbol)
                 sb.Append(stringValue);
             else
                 sb.Append('"').Append(stringValue).Append('"');
