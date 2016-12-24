@@ -41,22 +41,20 @@ namespace Parser
         {
             // TODO: handle value == null
 
-            // TODO: destructuring {@x}
-
-            if (hole.CaptureType == CaptureType.Stringification)
+            switch (hole.CaptureType)
             {
-                // TODO: we don't need to support format and alignment here?
-                sb.Append('"').Append(value.ToString()).Append('"');
-                return;
+                case CaptureType.Stringification:
+                    // TODO: we don't need to support format and alignment here?
+                    sb.Append('"').Append(value.ToString()).Append('"');
+                    break;
+                case CaptureType.Destructuring:
+                    DestructorManager.Instance.DestructureObject(sb, value);
+                    break;
+                default:
+                    var holeFormat = hole.Format;
+                    ValueRenderer.AppendValue(sb, value, legacy, holeFormat);
+                    break;
             }
-
-
-            var holeFormat = hole.Format;
-
-
-            ValueRenderer.AppendValue(sb, value, legacy, holeFormat);
-
-
         }
     }
 }

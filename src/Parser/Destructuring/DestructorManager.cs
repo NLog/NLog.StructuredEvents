@@ -64,12 +64,15 @@ namespace Parser
         {
             var sb = new StringBuilder();
 
-            var type = value.GetType();
-            var destructurer = GetDestructurer(type);
-            destructurer.DestructureObject(sb, value);
+            DestructureObject(sb, value);
             return sb.ToString();
         }
 
-
+        public void DestructureObject(StringBuilder sb, object value)
+        {
+            var type = value.GetType();
+            var destructurer = GetDestructurer(type);
+            destructurer.DestructureObject(sb, value);
+        }
     }
 }
