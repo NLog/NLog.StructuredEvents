@@ -54,7 +54,7 @@ namespace Parser
             var holeFormat = hole.Format;
 
 
-            Destructurer.AppendValue(sb, value, legacy, holeFormat);
+            ValueRenderer.AppendValue(sb, value, legacy, holeFormat);
 
 
         }

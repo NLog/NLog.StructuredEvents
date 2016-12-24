@@ -10,17 +10,20 @@ namespace Parser
 {
     public class Destructurer
     {
+        /// <summary>
+        /// Cache for property infos
+        /// </summary>
         private static Dictionary<Type, PropertyInfo[]> PropsCache = new Dictionary<Type, PropertyInfo[]>();
 
 
         internal string DestructureObject(object value)
         {
             var stringBuilder = new StringBuilder();
-            DestructureObject(value, stringBuilder);
+            DestructureObject(stringBuilder, value);
             return stringBuilder.ToString();
         }
 
-        public void DestructureObject(object value, StringBuilder sb)
+        public void DestructureObject(StringBuilder sb, object value)
         {
             var props = GetProps(value);
 
@@ -35,11 +38,12 @@ namespace Parser
                     sb.Append(", ");
                 }
                 isFirst = false;
+                //todo escape name? (e.g. spaces)
                 sb.Append(prop.Name);
                 sb.Append(":");
-                //todo escape?
+                //todo escape value? (e.g quotes)
                 var propValue = prop.GetValue(value, null);
-                AppendValue(sb, propValue, false, null);
+                ValueRenderer.AppendValue(sb, propValue, false, null);
             }
             sb.Append('}');
 
@@ -61,58 +65,6 @@ namespace Parser
             }
            
             return props;
-        }
-
-        public static void AppendValue(StringBuilder sb, object value, bool legacy, string format)
-        {
-
-            string stringValue;
-            // Shortcut common case. It is important to do this before IEnumerable, as string _is_ IEnumerable
-            if ((stringValue = value as string) != null)
-            {
-                AppendValueAsString(sb, stringValue, legacy, format);
-                return;
-            }
-
-
-            IEnumerable collection;
-            if (!legacy && (collection = value as IEnumerable) != null)
-            {
-                bool separator = false;
-                foreach (var item in collection)
-                {
-                    if (separator) sb.Append(", ");
-                    AppendValue(sb, item, false, format);
-                    separator = true;
-                }
-                return;
-            }
-
-            IFormattable formattable;
-            if (format != null && (formattable = value as IFormattable) != null)
-            {
-                sb.Append(formattable.ToString(format, CultureInfo.CurrentCulture));
-            }
-
-            else if (value is char)
-            {
-                if (legacy || format == "l")
-                    sb.Append((char)value);
-                else
-                    sb.Append('"').Append((char)value).Append('"');
-            }
-            else
-            {
-                sb.Append(value.ToString());
-            }
-        }
-
-        private static void AppendValueAsString(StringBuilder sb, string stringValue, bool legacy, string format)
-        {
-            if (legacy || format == "l")
-                sb.Append(stringValue);
-            else
-                sb.Append('"').Append(stringValue).Append('"');
         }
     }
 }
