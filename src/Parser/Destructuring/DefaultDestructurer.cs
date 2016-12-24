@@ -60,7 +60,11 @@ namespace Parser
             PropertyInfo[] props;
             if (!PropsCache.TryGetValue(type, out props))
             {
+#if NETSTANDARD
+                props = type.GetRuntimeProperties().ToArray();
+#else
                 props = type.GetProperties();
+#endif
                 PropsCache[type] = props;
             }
            

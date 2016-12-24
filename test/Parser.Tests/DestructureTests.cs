@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using Xunit;
@@ -36,7 +37,15 @@ namespace Parser.Tests
             var uri = new Uri("https://www.test.com?q=v");
             var destructer = new DefaultDestructurer();
             var actual = destructer.DestructureObject(uri);
-            Assert.Equal("{AbsolutePath:\"/\", AbsoluteUri:\"https://www.test.com/?q=v\", LocalPath:\"/\", Authority:\"www.test.com\", HostNameType:Dns, IsDefaultPort:True, IsFile:False, IsLoopback:False, PathAndQuery:\"/?q=v\", Segments:\"/\", IsUnc:False, Host:\"www.test.com\", Port:443, Query:\"?q=v\", Fragment:\"\", Scheme:\"https\", OriginalString:\"https://www.test.com?q=v\", DnsSafeHost:\"www.test.com\", IdnHost:\"www.test.com\", IsAbsoluteUri:True, UserEscaped:False, UserInfo:\"\"}", actual);
+            
+            
+#if NETSTANDARD
+            string expected = "{IsImplicitFile:False, IsUncOrDosPath:False, IsDosPath:False, IsUncPath:False, HostType:HostNotParsed, DnsHostType, Syntax:System.UriParser+BuiltInUriParser, IsNotAbsoluteUri:False, AllowIdn:False, UserDrivenParsing:False, SecuredPathIndex:0, AbsolutePath:\"/\", PrivateAbsolutePath:\"/\", AbsoluteUri:\"https://www.test.com/?q=v\", LocalPath:\"/\", Authority:\"www.test.com\", HostNameType:Dns, IsDefaultPort:True, IsFile:False, IsLoopback:False, PathAndQuery:\"/?q=v\", Segments:\"/\", IsUnc:False, Host:\"www.test.com\", Port:443, Query:\"?q=v\", Fragment:\"\", Scheme:\"https\", OriginalStringSwitched:False, OriginalString:\"https://www.test.com?q=v\", DnsSafeHost:\"www.test.com\", IdnHost:\"www.test.com\", IsAbsoluteUri:True, UserEscaped:False, UserInfo:\"\", HasAuthority:True}";
+#else
+            string expected = "{AbsolutePath:\"/\", AbsoluteUri:\"https://www.test.com/?q=v\", LocalPath:\"/\", Authority:\"www.test.com\", HostNameType:Dns, IsDefaultPort:True, IsFile:False, IsLoopback:False, PathAndQuery:\"/?q=v\", Segments:\"/\", IsUnc:False, Host:\"www.test.com\", Port:443, Query:\"?q=v\", Fragment:\"\", Scheme:\"https\", OriginalString:\"https://www.test.com?q=v\", DnsSafeHost:\"www.test.com\", IdnHost:\"www.test.com\", IsAbsoluteUri:True, UserEscaped:False, UserInfo:\"\"}";
+#endif    
+            
+            Assert.Equal(expected, actual);
         }
 
         [Fact]

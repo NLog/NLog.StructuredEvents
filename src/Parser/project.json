@@ -6,9 +6,12 @@
   },
 
   "frameworks": {
-    //"netstandard1.0": {
-    //  "imports": "dnxcore50"
-    //},
+    "netstandard1.0": {
+      "imports": "dnxcore50",
+      "buildOptions": {
+         "define": ["NETSTANDARD"]
+      }
+    },
     "net35": {
       "frameworkAssemblies": { "System.Core": "" }
     }
