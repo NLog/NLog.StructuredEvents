@@ -54,63 +54,9 @@ namespace Parser
             var holeFormat = hole.Format;
 
 
+            Destructurer.AppendValue(sb, value, legacy, holeFormat);
 
 
-            AppendValue(sb, value, legacy, holeFormat);
-
-
-        }
-
-        private static void AppendValue(StringBuilder sb, object value, bool legacy, string holeFormat)
-        {
-
-            string stringValue;
-            // Shortcut common case. It is important to do this before IEnumerable, as string _is_ IEnumerable
-            if ((stringValue = value as string) != null)
-            {
-                AppendValueAsString(sb, stringValue, legacy, holeFormat);
-                return;
-            }
-
-
-            IEnumerable collection;
-            if (!legacy && (collection = value as IEnumerable) != null)
-            {
-                bool separator = false;
-                foreach (var item in collection)
-                {
-                    if (separator) sb.Append(", ");
-                    AppendValue(sb, item, false, holeFormat);
-                    separator = true;
-                }
-                return;
-            }
-
-            IFormattable formattable;
-            if (holeFormat != null && (formattable = value as IFormattable) != null)
-            {
-                sb.Append(formattable.ToString(holeFormat, CultureInfo.CurrentCulture));
-            }
-
-            else if (value is char)
-            {
-                if (legacy || holeFormat == "l")
-                    sb.Append((char)value);
-                else
-                    sb.Append('"').Append((char)value).Append('"');
-            }
-            else
-            {
-                sb.Append(value.ToString());
-            }
-        }
-
-        private static void AppendValueAsString(StringBuilder sb, string stringValue, bool legacy, string holeFormat)
-        {
-            if (legacy || holeFormat == "l")
-                sb.Append(stringValue);
-            else
-                sb.Append('"').Append(stringValue).Append('"');
         }
     }
 }
