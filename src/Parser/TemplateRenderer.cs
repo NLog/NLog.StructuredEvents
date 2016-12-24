@@ -50,47 +50,51 @@ namespace Parser
                 return;
             }
 
+            
+            var holeFormat = hole.Format;
+
+
+
+
+            AppendValue(sb, value, legacy, holeFormat);
+
+    
+        }
+
+        private static void AppendValue(StringBuilder sb, object value, bool legacy, string holeFormat)
+        {
+
+            string stringValue;
             // Shortcut common case. It is important to do this before IEnumerable, as string _is_ IEnumerable
-            if (value is string)
+            if ((stringValue = value as string) != null)
             {
-                template.AppendValue(sb, ref hole, value, legacy);
+                AppendValueAsString(sb, stringValue, legacy, holeFormat);
                 return;
             }
+
 
             IEnumerable collection;
             if (!legacy && (collection = value as IEnumerable) != null)
             {
                 bool separator = false;
-                foreach (var item in collection) {
+                foreach (var item in collection)
+                {
                     if (separator) sb.Append(", ");
-                    template.AppendValue(sb, ref hole, item, false);
+                    AppendValue(sb, item, false, holeFormat);
                     separator = true;
                 }
                 return;
             }
 
-            template.AppendValue(sb, ref hole, value, legacy);
-        }
-
-        private static void AppendValue(this Template template, StringBuilder sb, ref Hole hole, object value, bool legacy)
-        {
-            // TODO: value can be null again (from IEnumerable)
             IFormattable formattable;
-            string stringValue;
-            if (hole.Format != null && (formattable = value as IFormattable) != null)
+            if (holeFormat != null && (formattable = value as IFormattable) != null)
             {
-                sb.Append(formattable.ToString(hole.Format, CultureInfo.CurrentCulture));
+                sb.Append(formattable.ToString(holeFormat, CultureInfo.CurrentCulture));
             }
-            else if ((stringValue = value as string) != null)
-            {
-                if (legacy || hole.Format == "l")
-                    sb.Append(stringValue);
-                else
-                    sb.Append('"').Append(stringValue).Append('"');
-            }
+
             else if (value is char)
             {
-                if (legacy || hole.Format == "l")
+                if (legacy || holeFormat == "l")
                     sb.Append((char)value);
                 else
                     sb.Append('"').Append((char)value).Append('"');
@@ -99,6 +103,14 @@ namespace Parser
             {
                 sb.Append(value.ToString());
             }
+        }
+
+        private static void AppendValueAsString(StringBuilder sb, string stringValue, bool legacy, string holeFormat)
+        {
+            if (legacy || holeFormat == "l")
+                sb.Append(stringValue);
+            else
+                sb.Append('"').Append(stringValue).Append('"');
         }
     }
 }
