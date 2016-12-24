@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Globalization;
-using System.Linq;
 using System.Text;
 using Parser.Parts;
 
@@ -15,27 +11,35 @@ namespace Parser
         {
             var sb = new StringBuilder(template.Value.Length + 64 * template.Holes.Length);
             int pos = 0;
-            int h = 0;
+            int holeIndex = 0;
             foreach (var literal in template.Literals)
             {
                 sb.Append(template.Value, pos, literal.Print);
                 pos += literal.Print;
                 if (literal.Skip == 0)
+                {
                     pos++;
+                }
                 else
                 {
                     pos += literal.Skip;
                     if (template.IsPositional)
-                        RenderHolePositional(sb, template.Holes[h++], parameters);
+                    {
+                        RenderHolePositional(sb, template.Holes[holeIndex++], parameters);
+                    }
                     else
-                        RenderHole(sb, template.Holes[h], parameters[h++]);
+                    {
+                        RenderHole(sb, template.Holes[holeIndex], parameters[holeIndex++]);
+                    }
                 }
             }
             return sb.ToString();
         }
 
         private static void RenderHolePositional(StringBuilder sb, Hole hole, object[] parameters)
-            => RenderHole(sb, hole, parameters[hole.Index], true);
+        {
+            RenderHole(sb, hole, parameters[hole.Index], true);
+        }
 
         private static void RenderHole(StringBuilder sb, Hole hole, object value, bool legacy = false)
         {
