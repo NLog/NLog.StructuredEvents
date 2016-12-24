@@ -20,29 +20,29 @@ namespace Parser
             {
                 sb.Append(template.Value, pos, literal.Print);
                 pos += literal.Print;
-                if (literal.Skip == 0) 
+                if (literal.Skip == 0)
                     pos++;
                 else
                 {
                     pos += literal.Skip;
                     if (template.IsPositional)
-                        template.RenderHolePositional(sb, ref template.Holes[h++], parameters);
+                        RenderHolePositional(sb, template.Holes[h++], parameters);
                     else
-                        template.RenderHole(sb, ref template.Holes[h], parameters[h++]);
+                        RenderHole(sb, template.Holes[h], parameters[h++]);
                 }
             }
             return sb.ToString();
         }
 
-        private static void RenderHolePositional(this Template template, StringBuilder sb, ref Hole hole, object[] parameters)
-            => template.RenderHole(sb, ref hole, parameters[hole.Index], true);
+        private static void RenderHolePositional(StringBuilder sb, Hole hole, object[] parameters)
+            => RenderHole(sb, hole, parameters[hole.Index], true);
 
-        private static void RenderHole(this Template template, StringBuilder sb, ref Hole hole, object value, bool legacy = false)
+        private static void RenderHole(StringBuilder sb, Hole hole, object value, bool legacy = false)
         {
             // TODO: handle value == null
-        
+
             // TODO: destructuring {@x}
-        
+
             if (hole.CaptureType == CaptureType.Stringification)
             {
                 // TODO: we don't need to support format and alignment here?
@@ -50,7 +50,7 @@ namespace Parser
                 return;
             }
 
-            
+
             var holeFormat = hole.Format;
 
 
@@ -58,7 +58,7 @@ namespace Parser
 
             AppendValue(sb, value, legacy, holeFormat);
 
-    
+
         }
 
         private static void AppendValue(StringBuilder sb, object value, bool legacy, string holeFormat)
