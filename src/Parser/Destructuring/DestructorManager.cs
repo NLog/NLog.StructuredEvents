@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Text;
 
 namespace Parser
@@ -64,15 +65,15 @@ namespace Parser
         {
             var sb = new StringBuilder();
 
-            DestructureObject(sb, value);
+            DestructureObject(sb, value, CultureInfo.InvariantCulture);
             return sb.ToString();
         }
 
-        public void DestructureObject(StringBuilder sb, object value)
+        public void DestructureObject(StringBuilder sb, object value, IFormatProvider formatProvider)
         {
             var type = value.GetType();
             var destructurer = GetDestructurer(type);
-            destructurer.DestructureObject(sb, value);
+            destructurer.DestructureObject(sb, value, formatProvider);
         }
     }
 }

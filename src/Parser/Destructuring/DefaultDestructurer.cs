@@ -19,11 +19,11 @@ namespace Parser
         internal string DestructureObject(object value)
         {
             var stringBuilder = new StringBuilder();
-            DestructureObject(stringBuilder, value);
+            DestructureObject(stringBuilder, value, CultureInfo.InvariantCulture);
             return stringBuilder.ToString();
         }
 
-        public void DestructureObject(StringBuilder sb, object value)
+        public void DestructureObject(StringBuilder sb, object value, IFormatProvider formatProvider)
         {
             var props = GetProps(value);
 
@@ -43,7 +43,7 @@ namespace Parser
                 sb.Append(":");
                 //todo escape value? (e.g quotes)
                 var propValue = prop.GetValue(value, null);
-                ValueRenderer.AppendValue(sb, propValue, false, null);
+                ValueRenderer.AppendValue(sb, propValue, false, null, formatProvider);
             }
             sb.Append('}');
 

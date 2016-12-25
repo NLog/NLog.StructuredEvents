@@ -5,6 +5,6 @@ namespace Parser
 {
     public interface IDestructurer
     {
-        void DestructureObject(StringBuilder sb, object value);
+        void DestructureObject(StringBuilder sb, object value, IFormatProvider formatProvider);
     }
 }

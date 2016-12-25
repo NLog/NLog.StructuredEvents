@@ -15,7 +15,7 @@ namespace Parser
             _func = func;
         }
 
-        public void DestructureObject(StringBuilder sb, object value)
+        public void DestructureObject(StringBuilder sb, object value, IFormatProvider formatProvider)
         {
             var o = value as T;
             if (o != null)

@@ -7,7 +7,7 @@ namespace Parser
     public static class TemplateRenderer
     {
 
-        public static string Render(this Template template, object[] parameters)
+        public static string Render(this Template template, IFormatProvider formatProvider, object[] parameters)
         {
             var sb = new StringBuilder(template.Value.Length + 64 * template.Holes.Length);
             int pos = 0;
@@ -25,23 +25,23 @@ namespace Parser
                     pos += literal.Skip;
                     if (template.IsPositional)
                     {
-                        RenderHolePositional(sb, template.Holes[holeIndex++], parameters);
+                        RenderHolePositional(sb, template.Holes[holeIndex++], formatProvider, parameters);
                     }
                     else
                     {
-                        RenderHole(sb, template.Holes[holeIndex], parameters[holeIndex++]);
+                        RenderHole(sb, template.Holes[holeIndex], formatProvider, parameters[holeIndex++]);
                     }
                 }
             }
             return sb.ToString();
         }
 
-        private static void RenderHolePositional(StringBuilder sb, Hole hole, object[] parameters)
+        private static void RenderHolePositional(StringBuilder sb, Hole hole, IFormatProvider formatProvider, object[] parameters)
         {
-            RenderHole(sb, hole, parameters[hole.Index], true);
+            RenderHole(sb, hole, formatProvider, parameters[hole.Index], true);
         }
 
-        private static void RenderHole(StringBuilder sb, Hole hole, object value, bool legacy = false)
+        private static void RenderHole(StringBuilder sb, Hole hole, IFormatProvider formatProvider, object value, bool legacy = false)
         {
             if (value == null)
             {
@@ -56,11 +56,11 @@ namespace Parser
                     sb.Append('"').Append(value.ToString()).Append('"');
                     break;
                 case CaptureType.Destructuring:
-                    DestructorManager.Instance.DestructureObject(sb, value);
+                    DestructorManager.Instance.DestructureObject(sb, value, formatProvider);
                     break;
                 default:
                     var holeFormat = hole.Format;
-                    ValueRenderer.AppendValue(sb, value, legacy, holeFormat);
+                    ValueRenderer.AppendValue(sb, value, legacy, holeFormat, formatProvider);
                     break;
             }
         }

@@ -11,7 +11,7 @@ namespace Parser
     {
         private const string LiteralFormatSymbol = "l";
 
-        public static void AppendValue(StringBuilder sb, object value, bool legacy, string format)
+        public static void AppendValue(StringBuilder sb, object value, bool legacy, string format, IFormatProvider formatProvider)
         {
 
             // todo support all scalar types: 
@@ -39,7 +39,7 @@ namespace Parser
                 foreach (var item in collection)
                 {
                     if (separator) sb.Append(", ");
-                    AppendValue(sb, item, false, format);
+                    AppendValue(sb, item, false, format, formatProvider);
                     separator = true;
                 }
                 return;
@@ -48,7 +48,7 @@ namespace Parser
             IFormattable formattable;
             if (format != null && (formattable = value as IFormattable) != null)
             {
-                sb.Append(formattable.ToString(format, CultureInfo.CurrentCulture));
+                sb.Append(formattable.ToString(format, formatProvider));
             }
 
             else if (value is char)
@@ -60,7 +60,7 @@ namespace Parser
             }
             else
             {
-                sb.Append(value.ToString());
+                sb.Append(Convert.ToString(value, formatProvider));
             }
         }
 
