@@ -37,7 +37,7 @@ namespace Parser.Tests
         [InlineData(" }}")]
         [InlineData("{0:000}")]
         [InlineData("{aaa:000}")]
-        [InlineData(" {@destructre} ")]
+        [InlineData(" {@serialize} ")]
         [InlineData(" {$stringify} ")]
         [InlineData(" {alignment,-10} ")]
         [InlineData(" {alignment,10} ")]
@@ -106,14 +106,14 @@ namespace Parser.Tests
 
         [Theory]
         [InlineData("{aaa}", CaptureType.Normal)]
-        [InlineData("{@a}", CaptureType.Destructuring)]
-        [InlineData("{@A}", CaptureType.Destructuring)]
-        [InlineData("{@8}", CaptureType.Destructuring)]
-        [InlineData("{@aaa}", CaptureType.Destructuring)]
-        [InlineData("{$a}", CaptureType.Stringification)]
-        [InlineData("{$A}", CaptureType.Stringification)]
-        [InlineData("{$9}", CaptureType.Stringification)]
-        [InlineData("{$aaa}", CaptureType.Stringification)]
+        [InlineData("{@a}", CaptureType.Serialize)]
+        [InlineData("{@A}", CaptureType.Serialize)]
+        [InlineData("{@8}", CaptureType.Serialize)]
+        [InlineData("{@aaa}", CaptureType.Serialize)]
+        [InlineData("{$a}", CaptureType.Stringify)]
+        [InlineData("{$A}", CaptureType.Stringify)]
+        [InlineData("{$9}", CaptureType.Stringify)]
+        [InlineData("{$aaa}", CaptureType.Stringify)]
         public void ParseHoleType(string input, CaptureType holeType)
         {
             var template = TemplateParser.Parse(input);

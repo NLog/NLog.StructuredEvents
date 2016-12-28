@@ -51,12 +51,12 @@ namespace Parser
 
             switch (hole.CaptureType)
             {
-                case CaptureType.Stringification:
+                case CaptureType.Stringify:
                     // TODO: we don't need to support format and alignment here?
                     sb.Append('"').Append(value.ToString()).Append('"');
                     break;
-                case CaptureType.Destructuring:
-                    DestructorManager.Instance.DestructureObject(sb, value, formatProvider);
+                case CaptureType.Serialize:
+                    SerializationManager.Instance.SerializeObject(sb, value, formatProvider);
                     break;
                 default:
                     var holeFormat = hole.Format;

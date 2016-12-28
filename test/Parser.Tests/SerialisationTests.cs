@@ -8,26 +8,15 @@ using Xunit.Extensions;
 
 namespace Parser.Tests
 {
-    public class DestructureTests
+    public class SerialisationTests
     {
         public static Person John = new Person("John", 99);
-
-        //// public IEnumerable<object RenderTestData
-
-        //[Theory]
-        //[MemberData(nameof(John))]
-        ////[InlineData("{0}", new object[] {"a"}, "a")]
-
-        //public void RenderTest(string input, object[] args, string expected)
-        //{
-
-        //}
 
         [Fact]
         public void TestJohn()
         {
-            var destructer = new DefaultDestructurer();
-            var actual = destructer.DestructureObject(John);
+            var serializer = new DefaultSerializer();
+            var actual = serializer.SerializeObject(John);
             Assert.Equal("{Name:\"John\", Age:99}", actual);
         }
 
@@ -35,8 +24,8 @@ namespace Parser.Tests
         public void TestUri()
         {
             var uri = new Uri("https://www.test.com?q=v");
-            var destructer = new DefaultDestructurer();
-            var actual = destructer.DestructureObject(uri);
+            var serializer = new DefaultSerializer();
+            var actual = serializer.SerializeObject(uri);
             
             
 #if NETSTANDARD
@@ -52,9 +41,9 @@ namespace Parser.Tests
         public void TestUriCustom()
         {
             var uri = new Uri("https://www.test.com?q=v");
-            var destructorManager = DestructorManager.Instance;
-            destructorManager.SaveDestructurFunc<Uri>(u => u.Host);
-            var actual = destructorManager.DestructureObject(uri);
+            var serializationManager = SerializationManager.Instance;
+            serializationManager.SaveSerializerFunc<Uri>(u => u.Host);
+            var actual = serializationManager.SerializeObject(uri);
             Assert.Equal("www.test.com", actual);
         }
 

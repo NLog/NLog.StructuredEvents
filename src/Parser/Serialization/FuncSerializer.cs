@@ -3,19 +3,17 @@ using System.Text;
 
 namespace Parser
 {
-    public class FuncDestructurer<T> : IDestructurer
+    public class FuncSerializer<T> : ISerialisation
         where T : class //todo add also class for struct
     {
-        #region Implementation of IDestructurer
-
         private Func<T, string> _func;
 
-        public FuncDestructurer(Func<T, string> func)
+        public FuncSerializer(Func<T, string> func)
         {
             _func = func;
         }
 
-        public void DestructureObject(StringBuilder sb, object value, IFormatProvider formatProvider)
+        public void SerializeObject(StringBuilder sb, object value, IFormatProvider formatProvider)
         {
             var o = value as T;
             if (o != null)
@@ -23,7 +21,5 @@ namespace Parser
                 sb.Append(_func(o));
             }
         }
-
-        #endregion
     }
 }

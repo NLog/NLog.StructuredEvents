@@ -8,7 +8,9 @@ using System.Text;
 
 namespace Parser
 {
-    public class DefaultDestructurer : IDestructurer
+
+    ///<summary>TODO combine with NLog's Json (injected) serializer?</summary>
+    public class DefaultSerializer : ISerialisation
     {
         /// <summary>
         /// Cache for property infos
@@ -16,14 +18,14 @@ namespace Parser
         private static Dictionary<Type, PropertyInfo[]> PropsCache = new Dictionary<Type, PropertyInfo[]>();
 
 
-        internal string DestructureObject(object value)
+        internal string SerializeObject(object value)
         {
             var stringBuilder = new StringBuilder();
-            DestructureObject(stringBuilder, value, CultureInfo.InvariantCulture);
+            SerializeObject(stringBuilder, value, CultureInfo.InvariantCulture);
             return stringBuilder.ToString();
         }
 
-        public void DestructureObject(StringBuilder sb, object value, IFormatProvider formatProvider)
+        public void SerializeObject(StringBuilder sb, object value, IFormatProvider formatProvider)
         {
             var props = GetProps(value);
 
@@ -43,6 +45,7 @@ namespace Parser
                 sb.Append(":");
                 //todo escape value? (e.g quotes)
                 var propValue = prop.GetValue(value, null);
+//todo nest objects, be warn of infinite loops.
                 ValueRenderer.AppendValue(sb, propValue, false, null, formatProvider);
             }
             sb.Append('}');

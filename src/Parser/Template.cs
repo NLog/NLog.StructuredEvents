@@ -90,7 +90,7 @@ namespace Parser
     {
         if (hole.CaptureType == CaptureType.Normal)
             sb.Append('{');
-        else if (hole.CaptureType == CaptureType.Destructuring)
+        else if (hole.CaptureType == CaptureType.Serialize)
             sb.Append("{@");
         else  // hole.CaptureType == CaptureType.Stringification
             sb.Append("{$");

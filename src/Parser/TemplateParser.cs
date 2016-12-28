@@ -88,11 +88,11 @@ namespace Parser
                     return;
                 case '@':
                     Skip('@');
-                    ParseHole(CaptureType.Destructuring);
+                    ParseHole(CaptureType.Serialize);
                     return;
                 case '$':
                     Skip('$');
-                    ParseHole(CaptureType.Stringification);
+                    ParseHole(CaptureType.Stringify);
                     return;
                 default:
                     ParseHole(CaptureType.Normal);
