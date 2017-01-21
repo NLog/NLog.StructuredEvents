@@ -5,23 +5,31 @@ using System.Text;
 
 namespace Parser
 {
-    ///<summary>Manager serializer for customizing serialization of specific types</summary>
+    ///<summary>Manager serializers for customizing serialization of specific types</summary>
     public class SerializationManager
     {
+        private Dictionary<Type, ISerialization> _serializers;
+
         private SerializationManager()
         {
             _serializers = new Dictionary<Type, ISerialization>();
         }
 
-        public static SerializationManager Instance = new SerializationManager();
-
-        private Dictionary<Type, ISerialization> _serializers;
+        /// <summary>
+        /// Default serializer
+        /// </summary>
+        public static ISerialization DefaultSerialization = null;
 
         /// <summary>
-        /// Static for static cache
+        /// Instance
         /// </summary>
-        private static ISerialization _defaultSerialization = new DefaultSerializer();
-
+        public static SerializationManager Instance = new SerializationManager();
+      
+        /// <summary>
+        /// Get the serializer for this type.
+        /// </summary>
+        /// <param name="type"></param>
+        /// <returns></returns>
         public ISerialization GetSerializer(Type type)
         {
             ISerialization serialization;
@@ -30,11 +38,11 @@ namespace Parser
                 return serialization;
 
             }
-            return _defaultSerialization;
+            return DefaultSerialization;
         }
 
         /// <summary>
-        /// Add/update
+        /// Add/update serializer for a type
         /// </summary>
         /// <param name="type"></param>
         /// <param name="serialization"></param>
@@ -54,7 +62,6 @@ namespace Parser
         }
 
         /// <summary>
-        /// TODO docs
         /// Helper for testing
         /// </summary>
         /// <param name="value"></param>
@@ -67,11 +74,22 @@ namespace Parser
             return sb.ToString();
         }
 
+        /// <summary>
+        /// Serialize an object
+        /// </summary>
+        /// <param name="sb"></param>
+        /// <param name="value"></param>
+        /// <param name="formatProvider"></param>
         public void SerializeObject(StringBuilder sb, object value, IFormatProvider formatProvider)
         {
             var type = value.GetType();
-            var Serializer = GetSerializer(type);
-            Serializer.SerializeObject(sb, value, formatProvider);
+            var serializer = GetSerializer(type);
+            if (serializer == null)
+            {
+                throw new Exception("No serializer found");
+            }
+
+            serializer.SerializeObject(sb, value, formatProvider);
         }
     }
 }

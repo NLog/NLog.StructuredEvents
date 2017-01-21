@@ -3,15 +3,24 @@ using System.Text;
 
 namespace Parser
 {
+    /// <summary>
+    /// Serialize a type with a (lamdba) function
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
     public class FuncSerializer<T> : ISerialization
     {
         private Func<T, IFormatProvider, string> _func;
 
         public FuncSerializer(Func<T, IFormatProvider, string> func)
         {
+            if (func == null)
+            {
+                throw new ArgumentNullException(nameof(func));
+            }
             _func = func;
         }
 
+        /// <inheritdoc />
         public void SerializeObject(StringBuilder sb, object value, IFormatProvider formatProvider)
         {
             if (value is T)
