@@ -1,11 +1,8 @@
 ﻿using System;
 using System.Collections;
-using System.Collections.Generic;
-using System.Globalization;
-using System.Linq;
 using System.Text;
 
-namespace Parser
+namespace NLog.StructuredEvents
 {
     public static class ValueRenderer
     {

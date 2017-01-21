@@ -1,11 +1,8 @@
 using System;
-using System.Collections.Generic;
 using System.Globalization;
-using System.Linq;
-using System.Threading.Tasks;
 using Xunit;
 
-namespace Parser.Tests
+namespace NLog.StructuredEvents.Tests
 {
     public class RendererTests
     {

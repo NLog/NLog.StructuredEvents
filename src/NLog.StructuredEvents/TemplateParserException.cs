@@ -1,6 +1,6 @@
 using System;
 
-namespace Parser
+namespace NLog.StructuredEvents
 {
     public class TemplateParserException : Exception
     {

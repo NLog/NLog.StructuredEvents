@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using Parser.Parts;
-using static System.Diagnostics.Debug;
+using NLog.StructuredEvents.Parts;
 
-namespace Parser
+namespace NLog.StructuredEvents
 {
     [SuppressMessage("ReSharper", "FieldCanBeMadeReadOnly.Local", Justification = "Performance")]
     public class TemplateParser
@@ -61,7 +61,7 @@ namespace Parser
                 if (_literalLength != 0)
                     AddLiteral();
 
-                Assert(_holes.Count == _literals.Count(x => x.Skip > 0));
+                Debug.Assert(_holes.Count == _literals.Count(x => x.Skip > 0));
                 return new Template(_template, _isPositional, _literals, _holes);
             }
             catch (IndexOutOfRangeException)
@@ -227,7 +227,7 @@ namespace Parser
         private void Skip(char c)
         {
             // Can be out of bounds, but never in correct use (expects a required char).
-            Assert(_template[_position] == c);
+            Debug.Assert(_template[_position] == c);
             _position++;
         }
 

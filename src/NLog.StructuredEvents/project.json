@@ -1,17 +1,17 @@
 ﻿{
-  "version": "0.2.0-alpha01",
+  "version": "0.3.0",
   "description": "Parsing and rendering message templates",
   "authors": [ "Julian Verdurmen" ],
   "packOptions": {
     "summary": "NLog - Message template parser and renderer",
-    "tags": [ "template", "parse", "remder" ],
+    "tags": [ "template", "parse", "render" ],
     "projectUrl": "http://nlog-project.org/",
-    "licenseUrl": "http://raw.github.com/NLog/NLog/master/LICENSE.txt",
+    "licenseUrl": "http://raw.github.com/NLog/NLog.StructuredEvents/master/LICENSE",
     "requireLicenseAcceptance": false,
     "iconUrl": "http://nlog-project.org/N.png",
     "repository": {
       "type": "git",
-      "url": "git://github.com/NLog/yamtp"
+      "url": "git://github.com/NLog/NLog.StructuredEvents"
     }
 
   },

@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Text;
-using Parser.Parts;
+using NLog.StructuredEvents.Parts;
+using NLog.StructuredEvents.Serialization;
 
-namespace Parser
+namespace NLog.StructuredEvents
 {
     public static class TemplateRenderer
     {

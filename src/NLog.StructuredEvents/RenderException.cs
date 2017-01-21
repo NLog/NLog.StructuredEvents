@@ -1,6 +1,6 @@
 using System;
 
-namespace Parser
+namespace NLog.StructuredEvents
 {
     /// <summary>
     /// Rendering failed

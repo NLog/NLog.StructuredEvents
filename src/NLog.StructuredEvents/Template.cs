@@ -1,12 +1,10 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using System.Globalization;
 using System.Text;
-using Parser.Parts;
+using NLog.StructuredEvents.Parts;
 
-namespace Parser
+namespace NLog.StructuredEvents
 {
   [SuppressMessage("ReSharper", "RedundantToStringCall", Justification = "Performance")]
   public class Template
