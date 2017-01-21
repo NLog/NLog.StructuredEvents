@@ -48,7 +48,7 @@ namespace Parser
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="func"></param>
-        public void SaveSerializerFunc<T>(Func<T, string> func)
+        public void SaveSerializerFunc<T>(Func<T, IFormatProvider, string> func)
         {
             SaveSerializer(typeof(T), new FuncSerializer<T>(func));
         }

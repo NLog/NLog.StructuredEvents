@@ -5,9 +5,9 @@ namespace Parser
 {
     public class FuncSerializer<T> : ISerialization
     {
-        private Func<T, string> _func;
+        private Func<T, IFormatProvider, string> _func;
 
-        public FuncSerializer(Func<T, string> func)
+        public FuncSerializer(Func<T, IFormatProvider, string> func)
         {
             _func = func;
         }
@@ -16,7 +16,7 @@ namespace Parser
         {
             if (value is T)
             {
-                sb.Append(_func((T)value));
+                sb.Append(_func((T)value, formatProvider));
             }
         }
     }

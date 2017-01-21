@@ -42,7 +42,7 @@ namespace Parser.Tests
         {
             var uri = new Uri("https://www.test.com?q=v");
             var serializationManager = SerializationManager.Instance;
-            serializationManager.SaveSerializerFunc<Uri>(u => u.Host);
+            serializationManager.SaveSerializerFunc<Uri>((u,f) => u.Host);
             var actual = serializationManager.SerializeObject(uri);
             Assert.Equal("www.test.com", actual);
         }
