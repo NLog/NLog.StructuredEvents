@@ -5,42 +5,42 @@ using System.Text;
 
 namespace Parser
 {
-    ///<summary>Manager serializer for customizing serialisation of specific types</summary>
+    ///<summary>Manager serializer for customizing serialization of specific types</summary>
     public class SerializationManager
     {
         private SerializationManager()
         {
-            _serializers = new Dictionary<Type, ISerialisation>();
+            _serializers = new Dictionary<Type, ISerialization>();
         }
 
         public static SerializationManager Instance = new SerializationManager();
 
-        private Dictionary<Type, ISerialisation> _serializers;
+        private Dictionary<Type, ISerialization> _serializers;
 
         /// <summary>
         /// Static for static cache
         /// </summary>
-        private static ISerialisation _defaultSerialisation = new DefaultSerializer();
+        private static ISerialization _defaultSerialization = new DefaultSerializer();
 
-        public ISerialisation GetSerializer(Type type)
+        public ISerialization GetSerializer(Type type)
         {
-            ISerialisation serialisation;
-            if (_serializers.TryGetValue(type, out serialisation))
+            ISerialization serialization;
+            if (_serializers.TryGetValue(type, out serialization))
             {
-                return serialisation;
+                return serialization;
 
             }
-            return _defaultSerialisation;
+            return _defaultSerialization;
         }
 
         /// <summary>
         /// Add/update
         /// </summary>
         /// <param name="type"></param>
-        /// <param name="serialisation"></param>
-        public void SaveSerializer(Type type, ISerialisation serialisation)
+        /// <param name="serialization"></param>
+        public void SaveSerializer(Type type, ISerialization serialization)
         {
-            _serializers[type] = serialisation;
+            _serializers[type] = serialization;
         }
 
         /// <summary>

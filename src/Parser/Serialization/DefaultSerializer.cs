@@ -10,7 +10,7 @@ namespace Parser
 {
 
     ///<summary>TODO combine with NLog's Json (injected) serializer?</summary>
-    public class DefaultSerializer : ISerialisation
+    public class DefaultSerializer : ISerialization
     {
         /// <summary>
         /// Cache for property infos

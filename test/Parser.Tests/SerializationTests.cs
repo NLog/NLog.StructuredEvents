@@ -8,7 +8,7 @@ using Xunit.Extensions;
 
 namespace Parser.Tests
 {
-    public class SerialisationTests
+    public class SerializationTests
     {
         public static Person John = new Person("John", 99);
 

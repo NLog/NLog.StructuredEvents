@@ -3,7 +3,7 @@ using System.Text;
 
 namespace Parser
 {
-    public interface ISerialisation
+    public interface ISerialization
     {
         void SerializeObject(StringBuilder sb, object value, IFormatProvider formatProvider);
     }

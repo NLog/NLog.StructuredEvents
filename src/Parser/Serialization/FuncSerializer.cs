@@ -3,7 +3,7 @@ using System.Text;
 
 namespace Parser
 {
-    public class FuncSerializer<T> : ISerialisation
+    public class FuncSerializer<T> : ISerialization
         where T : class //todo add also class for struct
     {
         private Func<T, string> _func;
