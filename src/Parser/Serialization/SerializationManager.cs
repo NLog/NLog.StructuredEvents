@@ -8,17 +8,17 @@ namespace Parser
     ///<summary>Manager serializers for customizing serialization of specific types</summary>
     public class SerializationManager
     {
-        private Dictionary<Type, ISerialization> _serializers;
+        private Dictionary<Type, ISerializer> _serializers;
 
         private SerializationManager()
         {
-            _serializers = new Dictionary<Type, ISerialization>();
+            _serializers = new Dictionary<Type, ISerializer>();
         }
 
         /// <summary>
         /// Default serializer
         /// </summary>
-        public static ISerialization DefaultSerialization = null;
+        public static ISerializer DefaultSerializer = null;
 
         /// <summary>
         /// Instance
@@ -30,25 +30,25 @@ namespace Parser
         /// </summary>
         /// <param name="type"></param>
         /// <returns></returns>
-        public ISerialization GetSerializer(Type type)
+        public ISerializer GetSerializer(Type type)
         {
-            ISerialization serialization;
-            if (_serializers.TryGetValue(type, out serialization))
+            ISerializer serializer;
+            if (_serializers.TryGetValue(type, out serializer))
             {
-                return serialization;
+                return serializer;
 
             }
-            return DefaultSerialization;
+            return DefaultSerializer;
         }
 
         /// <summary>
         /// Add/update serializer for a type
         /// </summary>
         /// <param name="type"></param>
-        /// <param name="serialization"></param>
-        public void SaveSerializer(Type type, ISerialization serialization)
+        /// <param name="serializer"></param>
+        public void SaveSerializer(Type type, ISerializer serializer)
         {
-            _serializers[type] = serialization;
+            _serializers[type] = serializer;
         }
 
         /// <summary>

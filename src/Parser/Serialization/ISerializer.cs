@@ -4,7 +4,7 @@ using System.Text;
 namespace Parser
 {
    ///<summary>Serializer</summary>
-    public interface ISerialization
+    public interface ISerializer
     {
         /// <summary>Serialize an object</summary>
         /// <param name="sb">Add serialized value to this builder</param>

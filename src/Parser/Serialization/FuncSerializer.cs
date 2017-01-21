@@ -7,7 +7,7 @@ namespace Parser
     /// Serialize a type with a (lamdba) function
     /// </summary>
     /// <typeparam name="T"></typeparam>
-    public class FuncSerializer<T> : ISerialization
+    public class FuncSerializer<T> : ISerializer
     {
         private Func<T, IFormatProvider, string> _func;
 

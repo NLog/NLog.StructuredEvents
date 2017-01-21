@@ -10,10 +10,10 @@ namespace Parser.Tests
     /// <summary>
     /// Serializer using the great JSON.NET
     /// </summary>
-    public class JsonNetSerializer : ISerialization
+    public class JsonNetSerializer : ISerializer
     {
 
-        public static ISerialization Instance => new JsonNetSerializer();
+        public static ISerializer Instance => new JsonNetSerializer();
 
         #region Implementation of ISerialization
 
