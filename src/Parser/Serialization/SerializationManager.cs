@@ -45,13 +45,10 @@ namespace Parser
 
         /// <summary>
         /// Add Serializer with only a func
-        /// 
-        /// Todo  overload for T: struct
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="func"></param>
         public void SaveSerializerFunc<T>(Func<T, string> func)
-            where T : class
         {
             SaveSerializer(typeof(T), new FuncSerializer<T>(func));
         }
