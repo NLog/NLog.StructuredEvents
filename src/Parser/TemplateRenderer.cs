@@ -25,7 +25,8 @@ namespace Parser
                     pos += literal.Skip;
                     if (template.IsPositional)
                     {
-                        RenderHole(sb, template.Holes[holeIndex++], formatProvider, parameters[template.Holes[holeIndex++].Index], true);
+                        Hole hole = template.Holes[holeIndex++];
+                        RenderHole(sb, hole, formatProvider, parameters[hole.Index], true);
                     }
                     else
                     {
