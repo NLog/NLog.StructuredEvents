@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -12,14 +13,35 @@ namespace Parser.Tests
     /// </summary>
     public class JsonNetSerializer : ISerializer
     {
+        private readonly bool _singleQuote;
+        private readonly bool _alwaysQuote;
+        private JsonSerializer _serializer;
 
-        public static ISerializer Instance => new JsonNetSerializer();
+        /// <summary>Initializes a new instance of the <see cref="T:System.Object" /> class.</summary>
+        public JsonNetSerializer(bool singleQuote, bool alwaysQuote)
+        {
+            _singleQuote = singleQuote;
+            _alwaysQuote = alwaysQuote;
+            _serializer = new JsonSerializer();
+        }
+
+
+        public static ISerializer Instance => new JsonNetSerializer(false, false);
 
         #region Implementation of ISerialization
 
         public void SerializeObject(StringBuilder sb, object value, IFormatProvider formatProvider)
         {
-            sb.AppendFormat(formatProvider, "{0}", JsonConvert.SerializeObject(value));
+            var stringWriter = new StringWriter(sb, formatProvider);
+            using (var writer = new JsonTextWriter(stringWriter))
+            {
+                writer.QuoteName = !_alwaysQuote;
+                if (_singleQuote)
+                {
+                    writer.QuoteChar = '\'';
+                }
+                _serializer.Serialize(writer, value);
+            }
         }
 
         #endregion
