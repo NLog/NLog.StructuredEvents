@@ -40,6 +40,7 @@ namespace Parser.Tests
         [InlineData("{{{0:dd}}}", new object[] { 3 }, "{dd}")]
         [InlineData("{{{0:0{{}", new object[] { 3 }, "{3{")] //format is here "0{"
         [InlineData("hello {0}", new object[] { null }, "hello NULL")]
+       
         public void RenderTest(string input, object[] args, string expected)
         {
             var culture = CultureInfo.InvariantCulture;

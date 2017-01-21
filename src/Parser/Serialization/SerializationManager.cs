@@ -86,7 +86,7 @@ namespace Parser
             var serializer = GetSerializer(type);
             if (serializer == null)
             {
-                throw new Exception("No serializer found");
+                throw new RenderException($"No serializer found for type ${type}");
             }
 
             serializer.SerializeObject(sb, value, formatProvider);
