@@ -7,12 +7,12 @@ namespace Parser.Parts
         /// </summary>
         Normal,
         /// <summary>
-        ///  destructuring operator {@x} 
+        ///  Serialize operator {@x} (aka destructure)
         /// </summary>
-        Destructuring,
+        Serialize,
         /// <summary>
         /// stringification operator {$x} 
         /// </summary>
-        Stringification,
+        Stringify,
     }
 }

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 using Xunit;
@@ -38,12 +39,31 @@ namespace Parser.Tests
         [InlineData("{{{0:d} }}", new object[] { 3 }, "{3 }")]
         [InlineData("{{{0:dd}}}", new object[] { 3 }, "{dd}")]
         [InlineData("{{{0:0{{}", new object[] { 3 }, "{3{")] //format is here "0{"
+        [InlineData("hello {0}", new object[] { null }, "hello NULL")]
+       
         public void RenderTest(string input, object[] args, string expected)
         {
-            var template = TemplateParser.Parse(input);            
-            var result = template.Render(args);
-            Assert.Equal(expected, result);
+            var culture = CultureInfo.InvariantCulture;
+
+            RenderAndTest(input, culture, args, expected);
         }
 
+        [Theory]
+        [InlineData("test {0}", "nl", new object[] { 12.3 }, "test 12,3")]
+        [InlineData("test {0}", "en-gb", new object[] { 12.3 }, "test 12.3")]
+        public void RenderCulture(string input, string language, object[] args, string expected)
+        {
+            var culture = new CultureInfo(language);
+
+            RenderAndTest(input, culture, args, expected);
+        }
+
+        private static void RenderAndTest(string input, CultureInfo culture, object[] args, string expected)
+        {
+            var template = TemplateParser.Parse(input);
+
+            var result = template.Render(culture, args);
+            Assert.Equal(expected, result);
+        }
     }
 }

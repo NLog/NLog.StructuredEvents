@@ -1,16 +1,38 @@
 ﻿{
-  "version": "1.0.0-*",
+  "version": "0.2.0-alpha01",
+  "description": "Parsing and rendering message templates",
+  "authors": [ "Julian Verdurmen" ],
+  "packOptions": {
+    "summary": "NLog - Message template parser and renderer",
+    "tags": [ "template", "parse", "remder" ],
+    "projectUrl": "http://nlog-project.org/",
+    "licenseUrl": "http://raw.github.com/NLog/NLog/master/LICENSE.txt",
+    "requireLicenseAcceptance": false,
+    "iconUrl": "http://nlog-project.org/N.png",
+    "repository": {
+      "type": "git",
+      "url": "git://github.com/NLog/yamtp"
+    }
 
-  "dependencies": {
-    "NETStandard.Library": "1.6.0"
   },
 
   "frameworks": {
     "netstandard1.0": {
-      "imports": "dnxcore50"
+      "imports": "dnxcore50",
+      "buildOptions": {
+        "define": [ "NETSTANDARD" ]
+      },
+      "dependencies": {
+        "NETStandard.Library": "1.6.0"
+      }
     },
     "net35": {
-      "frameworkAssemblies": { "System.Core": "" }
     }
   }
+  //,
+  //"buildOptions": {
+  //  "keyFile": "NLog.snk",
+  //  "xmlDoc": false
+
+  //}
 }
