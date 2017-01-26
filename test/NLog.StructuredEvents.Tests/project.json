@@ -25,10 +25,10 @@
       }
     }
   }
-  //,
-  //"buildOptions": {
-  //  "keyFile": "NLog.snk",
-  //  "xmlDoc": false
+  ,
+  "buildOptions": {
+    "keyFile": "NLogTests.snk",
+    "xmlDoc": false
 
-  //}
+  }
 }

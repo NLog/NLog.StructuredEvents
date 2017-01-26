@@ -29,10 +29,10 @@
     "net35": {
     }
   }
-  //,
-  //"buildOptions": {
-  //  "keyFile": "NLog.snk",
-  //  "xmlDoc": false
+  ,
+  "buildOptions": {
+    "keyFile": "NLog.snk",
+    "xmlDoc": false
 
-  //}
+  }
 }
