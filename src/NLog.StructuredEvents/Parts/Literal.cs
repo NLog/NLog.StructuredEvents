@@ -1,4 +1,4 @@
-namespace Parser.Parts
+namespace NLog.StructuredEvents.Parts
 {
     public struct Literal
     {

@@ -1,2 +1,2 @@
 dotnet restore 
-dotnet test test\Parser.Tests -c release                                                                                                                                                                                                     
+dotnet test test\NLog.StructuredEvents.Tests -c release                                                                                                                                                                                                     

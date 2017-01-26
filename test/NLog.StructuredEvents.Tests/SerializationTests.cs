@@ -1,13 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
 using System.Globalization;
-using System.Linq;
-using System.Threading.Tasks;
+using NLog.StructuredEvents.Serialization;
 using Xunit;
-using Xunit.Extensions;
 
-namespace Parser.Tests
+namespace NLog.StructuredEvents.Tests
 {
     public class SerializationTests
     {

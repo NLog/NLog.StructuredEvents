@@ -1,7 +1,7 @@
 using System;
 using System.Text;
 
-namespace Parser
+namespace NLog.StructuredEvents.Serialization
 {
     /// <summary>
     /// Serialize a type with a (lamdba) function

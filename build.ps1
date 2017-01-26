@@ -1,2 +1,2 @@
 dotnet restore 
-dotnet pack src\Parser -c release -o artifacts\
+dotnet pack src\NLog.StructuredEvents -c release -o artifacts\

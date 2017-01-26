@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Text;
 
-namespace Parser
+namespace NLog.StructuredEvents.Serialization
 {
     ///<summary>Manager serializers for customizing serialization of specific types</summary>
     public class SerializationManager

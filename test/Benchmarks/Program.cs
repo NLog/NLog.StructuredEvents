@@ -1,6 +1,6 @@
 using BenchmarkDotNet.Attributes;
 using BenchmarkDotNet.Running;
-using Parser;
+using NLog.StructuredEvents;
 
 public class Program 
 {

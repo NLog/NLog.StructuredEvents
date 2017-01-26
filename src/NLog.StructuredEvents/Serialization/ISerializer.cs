@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Text;
 
-namespace Parser
+namespace NLog.StructuredEvents.Serialization
 {
    ///<summary>Serializer</summary>
     public interface ISerializer
