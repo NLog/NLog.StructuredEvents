@@ -61,18 +61,7 @@ namespace NLog.StructuredEvents.Serialization
             SaveSerializer(typeof(T), new FuncSerializer<T>(func));
         }
 
-        /// <summary>
-        /// Helper for testing
-        /// </summary>
-        /// <param name="value"></param>
-        /// <returns></returns>
-        internal string SerializeObject(object value)
-        {
-            var sb = new StringBuilder();
-
-            SerializeObject(sb, value, CultureInfo.InvariantCulture);
-            return sb.ToString();
-        }
+  
 
         /// <summary>
         /// Serialize an object
