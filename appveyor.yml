@@ -7,3 +7,8 @@ test_script:
   - "SET PATH=C:\\Python34;C:\\Python34\\Scripts;%PATH%"
   - pip install codecov
   - codecov -f "coverage.xml"
+
+artifacts:
+- path: 'artifacts\**\*.nupkg'
+  name: NLog.StructuredEvents
+
