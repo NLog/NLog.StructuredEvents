@@ -1,5 +1,8 @@
 namespace NLog.StructuredEvents.Parts
 {
+    /// <summary>
+    /// A fixed value
+    /// </summary>
     public struct Literal
     {
         /// <summary>Number of characters from the original template to copy at the current position.</summary>

@@ -11,6 +11,10 @@ namespace NLog.StructuredEvents.Serialization
     {
         private Func<T, IFormatProvider, string> _func;
 
+        /// <summary>
+        /// Create a new serializer for a type with a lamba function.
+        /// </summary>
+        /// <param name="func"></param>
         public FuncSerializer(Func<T, IFormatProvider, string> func)
         {
             if (func == null)

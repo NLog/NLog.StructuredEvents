@@ -69,7 +69,8 @@
   },
   "buildOptions": {
     "keyFile": "NLog.snk",
-    "xmlDoc": false
+    "xmlDoc": true,
+    "optimize": true
 
   }
 }

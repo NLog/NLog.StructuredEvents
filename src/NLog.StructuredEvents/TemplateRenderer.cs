@@ -5,8 +5,18 @@ using NLog.StructuredEvents.Serialization;
 
 namespace NLog.StructuredEvents
 {
+    /// <summary>
+    /// Render templates
+    /// </summary>
     public static class TemplateRenderer
     {
+        /// <summary>
+        /// Render a template to a string.
+        /// </summary>
+        /// <param name="template">The template.</param>
+        /// <param name="formatProvider">Culture.</param>
+        /// <param name="parameters">Parameters for the holes.</param>
+        /// <returns>Rendered template, never null.</returns>
 
         public static string Render(this Template template, IFormatProvider formatProvider, object[] parameters)
         {

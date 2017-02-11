@@ -1,5 +1,8 @@
 namespace NLog.StructuredEvents.Parts
 {
+    /// <summary>
+    /// The type of the captured hole
+    /// </summary>
     public enum CaptureType : byte
     {
         /// <summary>
