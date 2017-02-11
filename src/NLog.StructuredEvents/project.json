@@ -27,9 +27,46 @@
       }
     },
     "net35": {
+    },
+    "Silverlight,Version=v4.0": {
+      "frameworkAssemblies": {
+        "mscorlib": "",
+        "System": "",
+        "System.Core": ""
+      }
+
+    },
+    "Silverlight,Version=v5.0": {
+      "frameworkAssemblies": {
+        "mscorlib": "",
+        "System": "",
+        "System.Core": ""
+      }
+
+    },
+    "wp8": {
+      "frameworkAssemblies": {
+        "mscorlib": "",
+        "System": "",
+        "System.Core": ""
+      }
+    },
+    "monoandroid2.3": {
+      "frameworkAssemblies": {
+        "mscorlib": "",
+        "System": "",
+        "System.Core": ""
+      }
+    },
+    "xamarin.ios10": {
+      "frameworkAssemblies": {
+        "mscorlib": "",
+        "System": "",
+        "System.Core": ""
+      }
     }
-  }
-  ,
+
+  },
   "buildOptions": {
     "keyFile": "NLog.snk",
     "xmlDoc": false
