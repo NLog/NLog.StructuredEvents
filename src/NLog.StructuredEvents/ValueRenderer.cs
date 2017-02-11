@@ -4,10 +4,21 @@ using System.Text;
 
 namespace NLog.StructuredEvents
 {
+    /// <summary>
+    /// Render or serialize a value, with optionnally backwardscompatible with <see cref="string.Format(System.IFormatProvider,string,object[])"/>
+    /// </summary>
     public static class ValueRenderer
     {
         private const string LiteralFormatSymbol = "l";
 
+        /// <summary>
+        /// Serialize the value and append to the <paramref name="sb"/>.
+        /// </summary>
+        /// <param name="sb">Append to this builder.</param>
+        /// <param name="value">The value to be appended.</param>
+        /// <param name="legacy">is this legacy AKA string.format style?</param>
+        /// <param name="format">Formatting for <see cref="IFormattable"/>.</param>
+        /// <param name="formatProvider">Provider for formatting.</param>
         public static void AppendValue(StringBuilder sb, object value, bool legacy, string format, IFormatProvider formatProvider)
         {
 

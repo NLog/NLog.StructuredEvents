@@ -7,6 +7,9 @@ namespace NLog.StructuredEvents
     /// </summary>
     public class RenderException : Exception
     {
+        /// <summary>
+        /// The template that triggered this exception.
+        /// </summary>
         public string Template { get; set; }
 
         /// <summary>Initializes a new instance of the <see cref="T:System.Exception" /> class.</summary>

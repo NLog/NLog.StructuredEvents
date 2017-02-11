@@ -7,9 +7,18 @@ using NLog.StructuredEvents.Parts;
 
 namespace NLog.StructuredEvents
 {
+    /// <summary>
+    /// Parse templates.
+    /// </summary>
     [SuppressMessage("ReSharper", "FieldCanBeMadeReadOnly.Local", Justification = "Performance")]
     public class TemplateParser
     {
+        /// <summary>
+        /// Parse a template.
+        /// </summary>
+        /// <param name="template">Template to be parsed.</param>
+        /// <exception cref="ArgumentNullException">When <paramref name="template"/> is null.</exception>
+        /// <returns>Template, never null</returns>
         public static Template Parse(string template)
         {
             if (template == null)
