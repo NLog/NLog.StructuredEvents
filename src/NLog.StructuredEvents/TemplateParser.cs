@@ -49,7 +49,7 @@ namespace NLog.StructuredEvents
         /// - at the end of the template.</summary>
         private void AddLiteral(int skip = 0)
         {
-            _literals.Add(new Literal { Print = (ushort)_literalLength, Skip = (ushort)skip });
+            _literals.Add(new Literal { Print = (short)_literalLength, Skip = (short)skip });
             _literalLength = 0;
         }
 
