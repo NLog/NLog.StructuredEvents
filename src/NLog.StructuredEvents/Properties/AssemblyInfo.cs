@@ -6,11 +6,13 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
+[assembly: AssemblyTitle("Parser and renderer for structured log events")]
+[assembly: AssemblyCopyright("Copyright (c) 2016-2017 Julian Verdurmen")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("Parser")]
+[assembly: AssemblyProduct("NLog.StructuredEvents")]
 [assembly: AssemblyTrademark("")]
-[assembly: AssemblyVersion("0.1.0.0")]
+//[assembly: AssemblyVersion("1.0.0.0")]
 
 // Setting ComVisible to false makes the types in this assembly not visible
 // to COM components.  If you need to access a type in this assembly from
