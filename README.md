@@ -1,3 +1,11 @@
+
+
+---
+
+ℹ️ Structured logging has been merged in to NLog 4.5 beta
+
+---
+
 # NLog.StructuredEvents [![Build status](https://ci.appveyor.com/api/projects/status/fs0kc13ywvyfcufe/branch/master?svg=true)](https://ci.appveyor.com/project/nlog/yamtp/branch/master) [![codecov](https://codecov.io/gh/nlog/NLog.StructuredEvents/branch/master/graph/badge.svg)](https://codecov.io/gh/nlog/NLog.StructuredEvents)
 
 Parsing and rendering of [message templates](https://messagetemplates.org). Fully backwards-compatible with Serilog's message template format and `String.Format()`.
