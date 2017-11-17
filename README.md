@@ -2,7 +2,7 @@
 
 ---
 
-ℹ️ Structured logging has been merged in to NLog 4.5 beta
+ℹ️ Structured logging has been merged into NLog 4.5 beta
 
 ---
 
